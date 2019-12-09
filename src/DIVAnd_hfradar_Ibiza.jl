@@ -10,11 +10,11 @@ Ibiza_case = (
     bathname = joinpath(ENV["HOME"],"tmp","HFRadar-Ibiza","bathymetry.mat"),
     # directory for the figures
     figdir = joinpath(ENV["HOME"],"Doc/DIVAnd_hfradar/Fig"),
-#    imax = 100,
-#    jmax = 100,
+    # longitude and latitude range
     lonrange = [0.3,1.45],
     latrange = [38.3,39.4],
     # reduction factor in resolution of the bathymetry
+    # this will be the resolution of the analysis
     red = 16,
     # maximum depth of surface currents
     hmax = 50,

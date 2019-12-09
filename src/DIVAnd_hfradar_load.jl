@@ -81,7 +81,7 @@ htmp = origh[i[1]:red:i[end],j[1]:red:j[end]]
 const mask2d = htmp .< 0
 htmp[.!mask2d] .= 0
 htmp = -htmp
-#const h = min.(htmp,75.)
+
 const h = min.(htmp,mycase.hmax)
 const htot = htmp
 
@@ -98,7 +98,7 @@ end
 const Ω = 7.2921e-5 # rad/s
 const f = 2*Ω*sin(mean(latr) * π /180)
 
-#ρ_1 = PhysOcean.density0(38.2,13) 
+#ρ_1 = PhysOcean.density0(38.2,13)
 #ρ_0 = PhysOcean.density0(37.7,20)
 ρ_0 = 1026.6;
 ρ_1 = 1028.7;
