@@ -29,7 +29,9 @@ vri = Array{Float64}((length(lonr),length(latr),length(timerange)))
 ηri = Array{Float64}((length(lonr),length(latr),length(timerange)))
 
 
-cases = ["2D","2D_bc","2D_div","3D","3D_Coriolis","3D_Coriolis_geo","3D_Coriolis_geo_gp"]
+#cases = ["2D","2D_bc","2D_div","3D","3D_Coriolis","3D_Coriolis_geo","3D_Coriolis_geo_gp"]
+
+cases = ["3D_Coriolis_geo",]
 for c in cases
 
     RMS,param = load_optim_param(c,postfix)
@@ -59,6 +61,6 @@ for c in cases
 
 
     fname = expanduser("~/tmp/HFRadar-Ibiza/$(postfix)/$(c).nc")
-          
+
     DIVAnd_hfradar_save(fname,lonr,latr,timerange,uri,vri,ηri)
 end
