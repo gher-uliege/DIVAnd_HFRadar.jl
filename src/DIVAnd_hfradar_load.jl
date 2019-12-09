@@ -1,16 +1,18 @@
 using Compat: findall
 
-const sites = ["FORM","GALF"]
-const basedir   = joinpath(ENV["HOME"],"tmp/HFRadar-Ibiza/Radials/")
+include("DIVAnd_hfradar_Ibiza.jl")
+
+const sites = mycase.sites
+const basedir = mycase.basedir
 
 
-const imax = 100;
-const jmax = 100;
+#const imax = mycase.imax
+#const jmax = mycase.jmax
+
 function daNA(tmp)
     return nomissing(tmp,NaN)
 end
 
-#peshape(xobs_all,(size(xobs_all,1),size(xobs_all,2),1,size(xobs_all,3)))
 
 const filename = joinpath(basedir,"radials.nc")
 
@@ -27,7 +29,7 @@ const sites_lon = nomissing(ds["site_lon"][:])
 const sites_lat = nomissing(ds["site_lat"][:])
 
 
-const figdir = joinpath(ENV["HOME"],"Doc/DIVAnd_hfradar/Fig")
+const figdir = mycase.figdir
 
 if false
     clf();
@@ -57,20 +59,14 @@ const siteorigin = Dict(sitenames[i] => (sites_lon[i],sites_lat[i]) for i = 1:le
 # end
 
 
-
-
-
-
-
-
 # lon/lat range
 
-const lonrange = [0.3,1.45]
-const latrange = [38.3,39.4]
+const lonrange = mycase.lonrange
+const latrange = mycase.latrange
 
 
 #mxi,myi,mask = load_mask(bath_name,true,lonr,latr,0)
-bathname = joinpath(basedir,"../bathymetry.mat")
+bathname = mycase.bathname
 origh = MAT.matread(bathname)["bat"]
 origlon = MAT.matread(bathname)["lon"]
 origlat = MAT.matread(bathname)["lat"]
@@ -78,7 +74,7 @@ origlat = MAT.matread(bathname)["lat"]
 j = findall((latrange[1] .< origlat) .& (origlat .< latrange[end]))
 i = findall((lonrange[1] .< origlon) .& (origlon .< lonrange[end]))
 
-red = 16
+red = mycase.red
 
 const lonr = origlon[i[1]:red:i[end]]
 const latr = origlat[j[1]:red:j[end]]
@@ -88,7 +84,7 @@ const mask2d = htmp .< 0
 htmp[.!mask2d] .= 0
 htmp = -htmp
 #const h = min.(htmp,75.)
-const h = min.(htmp,50.)
+const h = min.(htmp,mycase.hmax)
 const htot = htmp
 
 

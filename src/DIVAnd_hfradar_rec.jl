@@ -1,11 +1,12 @@
 import VelCon
 using NCDatasets
-using DataArrays
 import MAT
 import PhysOcean
 using GeoMapping
 using JLD
 using Glob
+using Statistics
+using DelimitedFiles
 
 include("DIVAnd_hfradar_save.jl")
 include("DIVAnd_hfradar_load.jl")
