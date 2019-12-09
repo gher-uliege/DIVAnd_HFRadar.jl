@@ -1,4 +1,4 @@
-import VelCon
+import DIVAnd_hfradar
 using NCDatasets
 using DataArrays
 import MAT
@@ -19,7 +19,7 @@ uri = Array{Float64}((length(lonr),length(latr),length(timerange)))
 vri = Array{Float64}((length(lonr),length(latr),length(timerange)))
 ηri = Array{Float64}((length(lonr),length(latr),length(timerange)))
 
-# @show VelCon.cverr(
+# @show DIVAnd_hfradar.cverr(
 #                xobs_all,yobs_all,robs_all,directionobs_all,flagcv_all,sitenames,
 #                lonr,latr,timerange,
 #                mask2d,h,(3e3,3e3,0.),(0.,0.,3600.),1e-4,-1,-1,-1,0.,1.; selection=selection)
@@ -40,7 +40,7 @@ vri = Array{Float64}((length(lonr),length(latr),length(timerange)))
 
 # # 2D bc
 
-# @show VelCon.cverr(
+# @show DIVAnd_hfradar.cverr(
 #                              xobs_all,yobs_all,robs_all,directionobs_all,flagcv_all,sitenames,
 #                              lonr,latr,timerange,
 #                              mask2d,h,(3e3,3e3,0.),(0.,0.,3600.),1e-4,1e-2,-1,-1,0.,1.; selection=selection)
@@ -60,7 +60,7 @@ vri = Array{Float64}((length(lonr),length(latr),length(timerange)))
 
 # # 2D div
 
-# @show VelCon.cverr(
+# @show DIVAnd_hfradar.cverr(
 #                              xobs_all,yobs_all,robs_all,directionobs_all,flagcv_all,sitenames,
 #                              lonr,latr,timerange,
 #                              mask2d,h,(3e3,3e3,0.),(0.,0.,3600.),1e-4,-1,4.9e8,-1,0.,1.; selection=selection)
@@ -79,7 +79,7 @@ vri = Array{Float64}((length(lonr),length(latr),length(timerange)))
 
 
 # # 3D
-# @show VelCon.cverr(
+# @show DIVAnd_hfradar.cverr(
 #                       xobs_all,yobs_all,robs_all,directionobs_all,flagcv_all,sitenames,
 #                       lonr,latr,timerange,
 #                       mask2d,h,(3e3,3e3,60*60 ),(0.,0.,3600.),1e-1,-1,-1,-1,0.,1.; selection=selection)
@@ -102,7 +102,7 @@ vri = Array{Float64}((length(lonr),length(latr),length(timerange)))
 
 # # Coriolis
 
-# @show VelCon.cverr(
+# @show DIVAnd_hfradar.cverr(
 #                xobs_all,yobs_all,robs_all,directionobs_all,flagcv_all,sitenames,
 #                lonr,latr,timerange,
 #                mask2d,h,(3e3,3e3,0.),(0.,0.,24*10*3600.),1e-4,-1,-1,1e-5,0.,10.; selection=selection)
@@ -127,7 +127,7 @@ vri = Array{Float64}((length(lonr),length(latr),length(timerange)))
 
 lenxy = 2889.25
     
-#@show VelCon.cverr(
+#@show DIVAnd_hfradar.cverr(
 #               xobs_all,yobs_all,robs_all,directionobs_all,flagcv_all,sitenames,
 #               lonr,latr,timerange,
 #    mask2d,h,(3e3,3e3,0.),(0,0,24*10*3600.),1e-4,-1,-1,1e-5,9.81,7.; selection=selection)
@@ -135,7 +135,7 @@ lenxy = 2889.25
 
 
 
-# cverr3D_Coriolis_geo(x) = VelCon.cverr(
+# cverr3D_Coriolis_geo(x) = DIVAnd_hfradar.cverr(
 #     xobs_all,yobs_all,robs_all,directionobs_all,flagcv_all,sitenames,
 #     lonr,latr,timerange,
 #     mask2d,htot,(lenxy,lenxy,0.),(0.,0.,24*10*3600),x[1],-1,-1,x[2],g_barotropic,x[3]; selection=selection,u = uri, v = vri, η = ηri)
@@ -143,7 +143,7 @@ lenxy = 2889.25
 # @show cverr3D_Coriolis_geo([5.981e-05, 4.347e-05, 1.138])
 # 0.04835521434506809
 
-cverr3D_Coriolis_geo2(x) = VelCon.cverr(
+cverr3D_Coriolis_geo2(x) = DIVAnd_hfradar.cverr(
     xobs_all,yobs_all,robs_all,directionobs_all,flagcv_all,sitenames,
     lonr,latr,timerange,
     mask2d,htot,(lenxy,lenxy,0.),(0.,0.,24*5*3600),x[1],-1,-1,x[2],g_barotropic,x[3]; selection=selection)
@@ -151,7 +151,7 @@ cverr3D_Coriolis_geo2(x) = VelCon.cverr(
 @show cverr3D_Coriolis_geo2([5.981e-05, 4.347e-05, 1.138])
 
 
-cverr3D_Coriolis_geo3(x) = VelCon.cverr(
+cverr3D_Coriolis_geo3(x) = DIVAnd_hfradar.cverr(
     xobs_all,yobs_all,robs_all,directionobs_all,flagcv_all,sitenames,
     lonr,latr,timerange,
     mask2d,htot,(lenxy,lenxy,0.),(0.,0.,24*15*3600),x[1],-1,-1,x[2],g_barotropic,x[3]; selection=selection)

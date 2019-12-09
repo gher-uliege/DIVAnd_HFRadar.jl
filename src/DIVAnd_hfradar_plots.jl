@@ -1,4 +1,4 @@
-import VelCon
+import DIVAnd_hfradar
 using NCDatasets
 using DataArrays
 import MAT
@@ -33,7 +33,7 @@ uri = Array{Float64}((length(lonr),length(latr),length(timerange)))
 vri = Array{Float64}((length(lonr),length(latr),length(timerange)))
 ηri = Array{Float64}((length(lonr),length(latr),length(timerange)))
 
-cverr2D(x) = VelCon.cverr(
+cverr2D(x) = DIVAnd_hfradar.cverr(
     xobs_all,yobs_all,robs_all,directionobs_all,flagcv_all,sitenames,
     lonr,latr,timerange,
     mask2d,h,(lenxy,lenxy,0.),(0.,0.,3600.),x[1],-1,-1,-1,0.,1.; selection=selection,u = uri, v = vri, η = ηri)
@@ -55,7 +55,7 @@ savefig("$(figdir)/DIVAnd_hfradar_2D.svg")
 
 # # 3D_Coriolis_geo
 
-# cverr3D_Coriolis_geo(x) = VelCon.cverr(
+# cverr3D_Coriolis_geo(x) = DIVAnd_hfradar.cverr(
 #     xobs_all,yobs_all,robs_all,directionobs_all,flagcv_all,sitenames,
 #     lonr,latr,timerange,
 #     mask2d,htot,(lenxy,lenxy,0.),(0.,0.,24*10*3600),x[1],-1,-1,x[2],g_barotropic,x[3]; selection=selection,u = uri, v = vri, η = ηri)

@@ -1,6 +1,6 @@
 @everywhere using DIVAnd
 @everywhere using GeoMapping
-@everywhere import VelCon
+@everywhere import DIVAnd_hfradar
 @everywhere using NCDatasets
 @everywhere using DataArrays
 @everywhere using BlackBoxOptim
@@ -29,7 +29,7 @@ lenxy = 2889.25
 
 if "2D_len" in cases
     # optmize lenxy and epsilon2
-    cverr2D(x) = VelCon.cverr(
+    cverr2D(x) = DIVAnd_hfradar.cverr(
         xobs_all,yobs_all,robs_all,directionobs_all,flagcv_all,sitenames,
         lonr,latr,timerange,
         mask2d,h,(x[1],x[1],0.),(0.,0.,3600.),x[2],-1,-1,-1,0.,1.; selection=selection)
@@ -51,7 +51,7 @@ end
 
 if "2D" in cases
     # optmize lenxy and epsilon2
-    cverr2D(x) = VelCon.cverr(
+    cverr2D(x) = DIVAnd_hfradar.cverr(
         xobs_all,yobs_all,robs_all,directionobs_all,flagcv_all,sitenames,
         lonr,latr,timerange,
         mask2d,h,(lenxy,lenxy,0.),(0.,0.,3600.),x[1],-1,-1,-1,0.,1.; selection=selection)
@@ -73,7 +73,7 @@ end
 
 if "2D_bc" in cases
     # optmize lenxy and epsilon2  bc
-    cverr2D_bc(x) = VelCon.cverr(
+    cverr2D_bc(x) = DIVAnd_hfradar.cverr(
         xobs_all,yobs_all,robs_all,directionobs_all,flagcv_all,sitenames,
         lonr,latr,timerange,
         mask2d,h,(lenxy,lenxy,0.),(0.,0.,3600.),x[1],x[2],-1,-1,0.,1.; selection=selection)
@@ -96,7 +96,7 @@ end
 
 if "2D_div" in cases
     # optmize lenxy and epsilon2 div
-    cverr2D_div(x) = VelCon.cverr(
+    cverr2D_div(x) = DIVAnd_hfradar.cverr(
         xobs_all,yobs_all,robs_all,directionobs_all,flagcv_all,sitenames,
         lonr,latr,timerange,
         mask2d,h,(lenxy,lenxy,0.),(0.,0.,3600.),x[1],-1,x[2],-1,0.,1.; selection=selection)
@@ -119,7 +119,7 @@ end
 
 if "3D" in cases
     # optmize lenxy and epsilon2 div and lent
-    cverr3D(x) = VelCon.cverr(
+    cverr3D(x) = DIVAnd_hfradar.cverr(
         xobs_all,yobs_all,robs_all,directionobs_all,flagcv_all,sitenames,
         lonr,latr,timerange,
         mask2d,h,(lenxy,lenxy,x[1]),(0.,0.,3600.),x[2],-1,-1,-1,0.,1.; selection=selection)
@@ -143,7 +143,7 @@ end
 
 if "3D_Coriolis" in cases
     # optmize lenxy and epsilon2 div and lent
-    cverr3D_Coriolis(x) = VelCon.cverr(
+    cverr3D_Coriolis(x) = DIVAnd_hfradar.cverr(
         xobs_all,yobs_all,robs_all,directionobs_all,flagcv_all,sitenames,
         lonr,latr,timerange,
         mask2d,h,(lenxy,lenxy,0.),(0.,0.,24*10*3600.),x[1],-1,-1,x[2],0.,1.; selection=selection)
@@ -167,7 +167,7 @@ end
 
 if "3D_Coriolis_geo" in cases
     # optmize lenxy and epsilon2 div and lent
-    cverr3D_Coriolis_geo(x) = VelCon.cverr(
+    cverr3D_Coriolis_geo(x) = DIVAnd_hfradar.cverr(
         xobs_all,yobs_all,robs_all,directionobs_all,flagcv_all,sitenames,
         lonr,latr,timerange,
         mask2d,h,(lenxy,lenxy,0.),(0.,0.,24*10*3600),x[1],-1,-1,x[2],9.81,x[3]; selection=selection)

@@ -1,4 +1,4 @@
-import VelCon
+import DIVAnd_hfradar
 using NCDatasets
 import MAT
 import PhysOcean
@@ -8,9 +8,7 @@ using Glob
 using Statistics
 using DelimitedFiles
 
-include("DIVAnd_hfradar_save.jl")
 include("DIVAnd_hfradar_load.jl")
-include("DIVAnd_hfradar_load_optim.jl")
 
 # # compute and remove mean
 # robs2 = copy(robs_all)
@@ -48,7 +46,7 @@ for c in cases
     ratio = param["ratio"]
 
 
-    @time @show VelCon.cverr(xobs_all,yobs_all,robs_all,directionobs_all,flagcv_all,sitenames,
+    @time @show DIVAnd_hfradar.cverr(xobs_all,yobs_all,robs_all,directionobs_all,flagcv_all,sitenames,
                    lonr,latr,timerange,
                    mask2d,htot,
                    len,lenη,
