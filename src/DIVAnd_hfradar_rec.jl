@@ -24,9 +24,9 @@ postfix = "rg50"
 postfix = "rg"
 mkpath(expanduser("~/tmp/HFRadar-Ibiza/$(postfix)"))
 
-uri = Array{Float64}((length(lonr),length(latr),length(timerange)))
-vri = Array{Float64}((length(lonr),length(latr),length(timerange)))
-ηri = Array{Float64}((length(lonr),length(latr),length(timerange)))
+uri = Array{Float64,3}(undef,(length(lonr),length(latr),length(timerange)))
+vri = Array{Float64,3}(undef,(length(lonr),length(latr),length(timerange)))
+ηri = Array{Float64,3}(undef,(length(lonr),length(latr),length(timerange)))
 
 
 #cases = ["2D","2D_bc","2D_div","3D","3D_Coriolis","3D_Coriolis_geo","3D_Coriolis_geo_gp"]
