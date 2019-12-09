@@ -196,30 +196,30 @@ function DIVAnd_hfradar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;
         function iPfun(x,iPx)
             iPx[:] = iP*x + (1/eps2_Coriolis_constrain) *
                 misfit_intertial_oscillation_geo_adj(
-                                                     sv,config,t,x0,misfit_intertial_oscillation_geo(
-                                                                                                     sv,config,t,x0,x))
+                    sv,config,t,x0,misfit_intertial_oscillation_geo(
+                        sv,config,t,x0,x))
         end
 
         fi,success,niter = DIVAnd.conjugategradient(
-                                                    iPfun,Pxa,tol=1e-6,maxit = 50000,
-                                                    #        progress = DIVAnd.cgprogress
-                                                    )
+            iPfun,Pxa,tol=1e-6,maxit = 50000,
+            #        progress = DIVAnd.cgprogress
+        )
 
         @show success
     else
         fi = iP \ Pxa
     end
 
-ηi,ui,vi = DIVAnd.statevector_unpack(sv,fi,NaN)
+    ηi,ui,vi = DIVAnd.statevector_unpack(sv,fi,NaN)
 
-uri = stagger_u2r(ui)
-vri = stagger_v2r(vi)
+    uri = stagger_u2r(ui)
+    vri = stagger_v2r(vi)
 
-residual[:] .= NaN
-residual[valid] = H*fi - yo
+    residual[:] .= NaN
+    residual[valid] = H*fi - yo
 
 
-return uri,vri,ηi
+    return uri,vri,ηi
 end
 
 
@@ -247,86 +247,86 @@ function cv_rec(
     imax = size(xobs_all,1)
     jmax = size(xobs_all,2)
     nsites = length(sitenames)
-        #@show @__LINE__,@__FILE__
+    #@show @__LINE__,@__FILE__
 
-        #ncenter = ncv[l]
-        @show ncenter
-        ntimes = max(ncenter-Δn,1):min(ncenter+Δn,length(timerange))
+    #ncenter = ncv[l]
+    @show ncenter
+    ntimes = max(ncenter-Δn,1):min(ncenter+Δn,length(timerange))
 
-        # select valid points within time range defined by ntimes
-        valid = .!isnan.(robs_all[:,:,ntimes,:])
+    # select valid points within time range defined by ntimes
+    valid = .!isnan.(robs_all[:,:,ntimes,:])
 
-        robs = robs_all[:,:,ntimes,:][valid]
-        directionobs = directionobs_all[:,:,ntimes,:][valid]
+    robs = robs_all[:,:,ntimes,:][valid]
+    directionobs = directionobs_all[:,:,ntimes,:][valid]
 
-        forcv = flagcv_all[:,:,ntimes,:][valid]
+    forcv = flagcv_all[:,:,ntimes,:][valid]
 
-        xobs = repeat(
-            reshape(xobs_all,(imax,jmax,1,size(xobs_all,3)));
-            inner = (1,1,length(ntimes),1))[valid]
+    xobs = repeat(
+        reshape(xobs_all,(imax,jmax,1,size(xobs_all,3)));
+        inner = (1,1,length(ntimes),1))[valid]
 
-        yobs = repeat(
-            reshape(yobs_all,(imax,jmax,1,size(xobs_all,3)));
-            inner = (1,1,length(ntimes),1))[valid]
+    yobs = repeat(
+        reshape(yobs_all,(imax,jmax,1,size(xobs_all,3)));
+        inner = (1,1,length(ntimes),1))[valid]
 
-        #sitenames_ = sitenames[ind2sub(size(valid),findall(valid))[4]]
-
-
-        tobs = repeat(reshape(converttime.(timerange[ntimes]),(1,1,length(ntimes),1)),inner = (imax,jmax,1,nsites))[valid];
-
-        residual = fill(NaN,size(robs))
-
-        if length(timerange) == 1
-            xi,yi = DIVAnd.ndgrid(lonr,latr)
-
-            pm = ones(size(xi)) / (DIVAnd.deg2m(1) * (xi[2,1]-xi[1,1]));
-            pn = ones(size(xi)) / (DIVAnd.deg2m(1) * cos(mean(yi) * pi/180) * (yi[1,2]-yi[1,1]));
-
-            #len = ntuple(i -> lenxy,length(sz))
-
-            pmn = (pm,pn)
-            xyi = (xi,yi)
-            xyobs = (xobs,yobs)
-
-            epsilon2 = fill(eps2,size(robs))
-        else
-            mask = repeat(mask2d,inner=(1,1,length(ntimes)))
-            h3d = repeat(h,inner=(1,1,length(ntimes)))
-            xi,yi,ti = DIVAnd.ndgrid(lonr,latr,converttime.(timerange[ntimes]))
-
-            pm = ones(size(xi)) / (DIVAnd.deg2m(1) * (xi[2,1,1]-xi[1,1,1]));
-            pn = ones(size(xi)) / (DIVAnd.deg2m(1) * cos(mean(yi) * pi/180) * (yi[1,2,1]-yi[1,1,1]));
-            po = ones(size(xi)) / (ti[1,1,2]-ti[1,1,1]);
-
-            # correlation length in meters
-            #len = (lenxy,lenxy,lent)
-
-            pmn = (pm,pn,po)
-            xyi = (xi,yi,ti)
-            xyobs = (xobs,yobs,tobs)
-
-            epsilon2 = fill(eps2,size(robs))
-        end
+    #sitenames_ = sitenames[ind2sub(size(valid),findall(valid))[4]]
 
 
-        sz = size(mask)
-        #h = ones(sz)
+    tobs = repeat(reshape(converttime.(timerange[ntimes]),(1,1,length(ntimes),1)),inner = (imax,jmax,1,nsites))[valid];
+
+    residual = fill(NaN,size(robs))
+
+    if length(timerange) == 1
+        xi,yi = DIVAnd.ndgrid(lonr,latr)
+
+        pm = ones(size(xi)) / (DIVAnd.deg2m(1) * (xi[2,1]-xi[1,1]));
+        pn = ones(size(xi)) / (DIVAnd.deg2m(1) * cos(mean(yi) * pi/180) * (yi[1,2]-yi[1,1]));
+
+        #len = ntuple(i -> lenxy,length(sz))
+
+        pmn = (pm,pn)
+        xyi = (xi,yi)
+        xyobs = (xobs,yobs)
+
+        epsilon2 = fill(eps2,size(robs))
+    else
+        mask = repeat(mask2d,inner=(1,1,length(ntimes)))
+        h3d = repeat(h,inner=(1,1,length(ntimes)))
+        xi,yi,ti = DIVAnd.ndgrid(lonr,latr,converttime.(timerange[ntimes]))
+
+        pm = ones(size(xi)) / (DIVAnd.deg2m(1) * (xi[2,1,1]-xi[1,1,1]));
+        pn = ones(size(xi)) / (DIVAnd.deg2m(1) * cos(mean(yi) * pi/180) * (yi[1,2,1]-yi[1,1,1]));
+        po = ones(size(xi)) / (ti[1,1,2]-ti[1,1,1]);
+
+        # correlation length in meters
+        #len = (lenxy,lenxy,lent)
+
+        pmn = (pm,pn,po)
+        xyi = (xi,yi,ti)
+        xyobs = (xobs,yobs,tobs)
+
+        epsilon2 = fill(eps2,size(robs))
+    end
 
 
-        epsilon2[forcv] .= Inf
+    sz = size(mask)
+    #h = ones(sz)
 
 
-        uri_temp,vri_temp,ηri_temp = VelCon.DIVAnd_hfradar(
-            mask,h3d,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;
-            eps2_boundary_constrain = eps2_boundary_constrain,
-            eps2_div_constrain = eps2_div_constrain,
-            eps2_Coriolis_constrain = eps2_Coriolis_constrain,
-            f = f,
-            g = g,
-            residual = residual,
-            lenη = lenη,
-            ratio = ratio
-        )
+    epsilon2[forcv] .= Inf
+
+
+    uri_temp,vri_temp,ηri_temp = VelCon.DIVAnd_hfradar(
+        mask,h3d,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;
+        eps2_boundary_constrain = eps2_boundary_constrain,
+        eps2_div_constrain = eps2_div_constrain,
+        eps2_Coriolis_constrain = eps2_Coriolis_constrain,
+        f = f,
+        g = g,
+        residual = residual,
+        lenη = lenη,
+        ratio = ratio
+    )
 
 
     residual4 = fill(NaN,(imax,jmax,length(ntimes),nsites))
@@ -377,7 +377,7 @@ function cverr(
                           eps2_Coriolis_constrain,
                           g,
                           ratio
-                   )
+                          )
 
     uri = Array{Float64}(undef,(length(lonr),length(latr),length(timerange)))
     vri = Array{Float64}(undef,(length(lonr),length(latr),length(timerange)))
