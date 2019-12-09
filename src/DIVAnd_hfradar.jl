@@ -52,7 +52,60 @@ function cgrid(mask,h,xyi,pmn)
 end
 
 
-""" f in  s⁻¹
+"""
+
+    DIVAnd_hfradar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;...)
+
+HF Radar current analysis with DIVAnd and velocity contraints.
+
+mask: true for sea points (false for land points) (3D-array)
+h: depth in meters (3D-array)
+pmn: inverse of the local resolution (tuple of three 3D-arrays)
+xyi: coordinates of the analysis grid (tuple of three 3D-arrays)
+xyobs: coordinates of the observations (tuple of three vectors)
+robs: radial velocity (vector)
+directionobs: angle α of the measured direction in degrees (vector) such that
+
+```math
+u\\_{obs} * sin(α) + v\\_{obs} * cos(α) ≈ robs
+```
+
+len,epsilon2
+f in  s⁻¹
+
+
+## Convention for the direction
+
+bearing β: angle at radar station (*) between North a measuring point (+) counted clockwise
+direction α: angle at measuring point between North and vector pointing to the radar station counted clockwise
+
+
+
+                ↑ /
+                |/
+         ↑      +--→ current vector (u,v)
+  North  |     / measurent point
+         |    /
+         |   /
+         |  /
+         |β/
+         |/
+         *
+   radar station
+
+direction α = bearing β + 180
+
+u zonal component, v meridional component
+u = r * sin(α)
+v = r * cos(α)
+
+r = u * sin(α) + v * cos(α)
+
+
+u = -r * sin(β)
+v = -r * cos(β)
+
+r, u, v, direction and β consistent with the CODAR convention of the ruv files
 
 """
 function DIVAnd_hfradar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;
