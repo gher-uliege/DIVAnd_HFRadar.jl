@@ -16,7 +16,7 @@ ds = Dataset(radfname);
 
 i = 10:35;
 j = :;
-    
+
 x = nomissing(ds["lon"][i]);
 y = nomissing(ds["lat"][j]);
 deta = ds["eta"][i,j,:];
@@ -40,9 +40,9 @@ for fname in fnames
     ds = Dataset(fname)
     lon = nomissing(ds["longitude"][:])
     lat = nomissing(ds["latitude"][:]);
-    
-    lon = mod.(lon + 180,360) - 180;        
-   
+
+    lon = mod.(lon + 180,360) - 180;
+
     sl = ds["adt_filtered"][:];
     #sl = ds["adt_unfiltered"][:];
     scatter(lon,lat,20,sl; vmin = cl[1], vmax = cl[2], cmap= cmap)

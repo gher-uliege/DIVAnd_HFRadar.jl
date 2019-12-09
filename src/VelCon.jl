@@ -12,7 +12,7 @@ if VERSION >= v"0.7"
     using SparseArrays
     using Dates
     using LinearAlgebra
-    
+
     spdiagm(v::AbstractVector) = sparse(Diagonal(v))
 else
     using Compat: findall, cat, sum
