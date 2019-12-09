@@ -15,7 +15,7 @@ function spobsoper_radvel(sv,modelgrid,Xobs,varindexu,varindexv,direction)
 
     Hgridv = spzeros(length(Xobs[1]),sv.n)
     Hgridv[:,sv.ind[varindexv]+1:sv.ind[varindexv+1]] = spdiagm(cos.(d)) * Hv * DIVAnd.sparse_pack(sv.mask[varindexv])'
-    
+
     valid = .!outu .& .!outv
     H = DIVAnd.sparse_pack(valid) * (Hgridu + Hgridv)
     return H,valid
@@ -43,7 +43,7 @@ function cgrid(mask,h,xyi,pmn)
 
     xyi_u = ([stagger_r2u(xi) for xi in xyi]...,)
     pmn_u = ([stagger_r2u(pm) for pm in pmn]...,)
-    
+
     xyi_v = ([stagger_r2v(xi) for xi in xyi]...,)
     pmn_v = ([stagger_r2v(pm) for pm in pmn]...,)
 
@@ -52,7 +52,7 @@ function cgrid(mask,h,xyi,pmn)
 end
 
 
-""" f in  s⁻¹ 
+""" f in  s⁻¹
 
 """
 function DIVAnd_hfradar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;
@@ -78,7 +78,7 @@ function DIVAnd_hfradar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;
         error("size of mask ($(DIVAnd.formatsize(sz))) does not match size of xyi ($(join([DIVAnd.formatsize(size(xi)) for xi in xyi],", ")))")
     end
 
-    if size(h) != sz 
+    if size(h) != sz
         error("size of mask ($(DIVAnd.formatsize(sz))) does not match size of h ($(DIVAnd.formatsize(size(h))))")
     end
 
@@ -105,7 +105,7 @@ function DIVAnd_hfradar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;
     # boundary_psi is unused
     boundary_u, boundary_v, boundary_psi = stagger_mask(mask,xor)
 
-    
+
     varindexu = 1
     varindexv = 2
 
@@ -147,7 +147,7 @@ function DIVAnd_hfradar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;
         Rboundary = eps2_boundary_constrain * Diagonal(ones(size(Hboundary,1)))
         yoboundary = zeros(size(Hboundary,1))
 
-        iP += Hboundary' * (Rboundary \ Hboundary) 
+        iP += Hboundary' * (Rboundary \ Hboundary)
         Pxa +=  Hboundary' * (Rboundary \ yoboundary)
     end
 
@@ -156,10 +156,10 @@ function DIVAnd_hfradar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;
         #   ∂hu/∂x + ∂hv/∂y  ≈ 0
         # cost function
         #   (∂hu/∂x + ∂hv/∂y)² / ϵ²_div
-        
+
         Iu = DIVAnd.sparse_diag(h_u[:] ./ pmn_u[2][:]);
         Iv = DIVAnd.sparse_diag(h_v[:] ./ pmn_v[1][:]);
-        
+
         Nt = if length(sz) == 2
             1
         else
@@ -170,7 +170,7 @@ function DIVAnd_hfradar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;
         TVx = DIVAnd.sparse_trim((sz[1],sz[2]-1,Nt),1);
         DUx = DIVAnd.sparse_diff((sz[1]-1,sz[2]-2,Nt),1);
         DVy = DIVAnd.sparse_diff((sz[1]-2,sz[2]-1,Nt),2);
-        
+
         Pu = DIVAnd.sparse_pack(mask_u);
         Pv = DIVAnd.sparse_pack(mask_v);
 
@@ -188,7 +188,7 @@ function DIVAnd_hfradar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;
     #@show @__LINE__,@__FILE__
 
     if eps2_Coriolis_constrain != -1
-        #if false    
+        #if false
         x0 = zeros(sv.n) # not used for a linear constrain
         ti = xyi[3]
         t = ti[1,1,:]
@@ -275,7 +275,7 @@ function cv_rec(
         tobs = repeat(reshape(converttime.(timerange[ntimes]),(1,1,length(ntimes),1)),inner = (imax,jmax,1,nsites))[valid];
 
         residual = fill(NaN,size(robs))
-        
+
         if length(timerange) == 1
             xi,yi = DIVAnd.ndgrid(lonr,latr)
 
@@ -288,12 +288,12 @@ function cv_rec(
             xyi = (xi,yi)
             xyobs = (xobs,yobs)
 
-            epsilon2 = fill(eps2,size(robs))    
+            epsilon2 = fill(eps2,size(robs))
         else
             mask = repeat(mask2d,inner=(1,1,length(ntimes)))
             h3d = repeat(h,inner=(1,1,length(ntimes)))
             xi,yi,ti = DIVAnd.ndgrid(lonr,latr,converttime.(timerange[ntimes]))
-            
+
             pm = ones(size(xi)) / (DIVAnd.deg2m(1) * (xi[2,1,1]-xi[1,1,1]));
             pn = ones(size(xi)) / (DIVAnd.deg2m(1) * cos(mean(yi) * pi/180) * (yi[1,2,1]-yi[1,1,1]));
             po = ones(size(xi)) / (ti[1,1,2]-ti[1,1,1]);
@@ -315,7 +315,7 @@ function cv_rec(
 
         epsilon2[forcv] .= Inf
 
-    
+
         uri_temp,vri_temp,ηri_temp = VelCon.DIVAnd_hfradar(
             mask,h3d,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;
             eps2_boundary_constrain = eps2_boundary_constrain,
@@ -347,7 +347,7 @@ function cverr(
     eps2_Coriolis_constrain,
     g,ratio; u = [], v = [], η = [], selection = :cv)
 
-    
+
     # time window
     Δn = 1
 
@@ -359,12 +359,12 @@ function cverr(
         ncv = findall(Compat.sum(flagcv_all,dims = [1,2,4])[:] .> 0)
     elseif selection == :debug
         @show "only 2"
-        
+
         ncv = findall(Compat.sum(flagcv_all,dims = [1,2,4])[:] .> 0)[1:2]
     else
-        error("unknown selection")        
+        error("unknown selection")
     end
-    
+
     #ncv = find(sum(flagcv_all,[1 2 4])[:] .> 0)
 
     fun(ncenter) = cv_rec(ncenter,Δn,
@@ -378,7 +378,7 @@ function cverr(
                           g,
                           ratio
                    )
-    
+
     uri = Array{Float64}(undef,(length(lonr),length(latr),length(timerange)))
     vri = Array{Float64}(undef,(length(lonr),length(latr),length(timerange)))
     ηri = Array{Float64}(undef,(length(lonr),length(latr),length(timerange)))
@@ -388,7 +388,7 @@ function cverr(
     vri[:] .= NaN
     ηri[:] .= NaN
     res[:] .= NaN
-    
+
     output = pmap(fun,ncv)
     #output = map(fun,ncv)
     #@show size(output),size(ncv)
@@ -397,7 +397,7 @@ function cverr(
     vri[:,:,ncv] = cat([o[2] for o in output]...; dims = 4)
     ηri[:,:,ncv] = cat([o[3] for o in output]...; dims = 4)
     res[:,:,ncv,:] = permutedims(cat([o[4] for o in output]...; dims = 4),[1,2,4,3])
-    
+
     #@show size(res),size(flagcv_all),size(output)
     # 0.0652580579558992 without Coriolis and no div
     # 0.05105108269989013 with f and g, no div
@@ -411,26 +411,26 @@ function cverr(
               eps2_Coriolis_constrain,
               g,ratio,
               cv_err)
-    
+
     @show status
 
     open("temp-output$(get(ENV,"SLURM_JOB_NAME",""))$(get(ENV,"SLURM_JOBID","")).txt","a") do f
         print(f,join(status,'\t'),"\n")
     end
-    
+
     #info("over all cross-validation central-time error is $(cv_err)")
 
     if !isempty(u)
         u[:] = uri
     end
-    
+
     if !isempty(v)
         v[:] = vri
     end
-    
+
     if !isempty(η)
         η[:] = ηri
     end
-    
+
     return cv_err
 end
