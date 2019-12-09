@@ -1,5 +1,3 @@
-using Compat: findall
-
 include("DIVAnd_hfradar_Ibiza.jl")
 
 const sites = mycase.sites

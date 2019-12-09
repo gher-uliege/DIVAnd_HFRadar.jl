@@ -3,21 +3,14 @@
 module VelCon
 
 import DIVAnd
-using Compat
 using Missings
+using Distributed
+using Statistics
+using SparseArrays
+using Dates
+using LinearAlgebra
 
-if VERSION >= v"0.7"
-    using Distributed
-    using Statistics
-    using SparseArrays
-    using Dates
-    using LinearAlgebra
-
-    spdiagm(v::AbstractVector) = sparse(Diagonal(v))
-else
-    using Compat: findall, cat, sum
-    blockdiag(x...) = blkdiag(x...)
-end
+spdiagm(v::AbstractVector) = sparse(Diagonal(v))
 
 include("stagger_mask.jl")
 include("stagger_r2u.jl")

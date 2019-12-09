@@ -356,11 +356,11 @@ function cverr(
     if selection == :all
         ncv = collect(1:size(flagcv_all,3))
     elseif selection == :cv
-        ncv = findall(Compat.sum(flagcv_all,dims = [1,2,4])[:] .> 0)
+        ncv = findall(sum(flagcv_all,dims = [1,2,4])[:] .> 0)
     elseif selection == :debug
         @show "only 2"
 
-        ncv = findall(Compat.sum(flagcv_all,dims = [1,2,4])[:] .> 0)[1:2]
+        ncv = findall(sum(flagcv_all,dims = [1,2,4])[:] .> 0)[1:2]
     else
         error("unknown selection")
     end

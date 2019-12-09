@@ -7,7 +7,7 @@ Ibiza_case = (
     # contains the file radials.nc
     basedir = joinpath(ENV["HOME"],"tmp/HFRadar-Ibiza/Radials/"),
     # bathymetry
-    bathname = joinpath(ENV["HOME"],"tmp","HFRadar-Ibiza","bathymetry.mat")
+    bathname = joinpath(ENV["HOME"],"tmp","HFRadar-Ibiza","bathymetry.mat"),
     # directory for the figures
     figdir = joinpath(ENV["HOME"],"Doc/DIVAnd_hfradar/Fig"),
 #    imax = 100,
