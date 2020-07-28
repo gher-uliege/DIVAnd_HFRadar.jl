@@ -168,7 +168,7 @@ if "3D_Coriolis_geo" in cases
     cverr3D_Coriolis_geo(x) = DIVAnd_hfradar.cverr(
         xobs_all,yobs_all,robs_all,directionobs_all,flagcv_all,sitenames,
         lonr,latr,timerange,
-        mask2d,htot,(x[1],x[1],0.),(0.,0.,24*10*3600),x[2],-1,-1,x[3],g_barotropic,x[4]; selection=selection)
+        mask2d,htot,(x[1],x[1],0.),(0.,0.,24*10*3600.),x[2],-1,-1,x[3],g_barotropic,x[4]; selection=selection)
 
     res = bboptimize(cverr3D_Coriolis_geo;
                      SearchRange = [
@@ -195,7 +195,7 @@ if "3D_Coriolis_geo_gp" in cases
     cverr3D_Coriolis_geo_gp(x) = DIVAnd_hfradar.cverr(
         xobs_all,yobs_all,robs_all,directionobs_all,flagcv_all,sitenames,
         lonr,latr,timerange,
-        mask2d,h,(x[1],x[1],0.),(0.,0.,24*10*3600),x[2],-1,-1,x[3],g_baroclinic,x[4]; selection=selection)
+        mask2d,h,(x[1],x[1],0.),(0.,0.,24*10*3600.),x[2],-1,-1,x[3],g_baroclinic,x[4]; selection=selection)
 
     res = bboptimize(cverr3D_Coriolis_geo_gp;
                      SearchRange = [
