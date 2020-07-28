@@ -1,3 +1,4 @@
+using JLD
 
 function spobsoper_radvel(sv,modelgrid,Xobs,varindexu,varindexv,direction)
 
@@ -165,19 +166,34 @@ function DIVAndrun_hfradar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;
     modelgrid = (xyi,xyi_u,xyi_v)
 
     sv = DIVAnd.statevector((mask,mask_u,mask_v));
+    #@show sv.n
+    #@show sum.(xyobs)
     H,valid = spobsoper_radvel(sv,modelgrid,xyobs,2,3,directionobs)
+    #JLD.@save "/tmp/new_data.jld" H valid xyobs directionobs sv
 
-    @show sum(valid)
+    #o = JLD.load("/tmp/old_data.jld")
+    #valid = o["valid"]
+    #H = sparse(o["Hi"],o["Hj"],o["Hval"],sum(valid),sv.n)
+
+    #@show sum(valid)
+    #@show size(H)
+    #@show length.(xyobs)
     #@show valid
 
     yo = robs[valid]
 
-    @time fi_η,s_η = DIVAnd.DIVAndrun(mask,pmn,xyi,xyobs,robs,lenη,1);
-    @time fi,s_u = DIVAnd.DIVAndrun(mask_u,pmn_u,xyi_u,xyobs,robs,len,1);
-    @time fi,s_v = DIVAnd.DIVAndrun(mask_v,pmn_v,xyi_v,xyobs,robs,len,1);
+    #@show sum(mask), sum.(pmn), lenη
 
+    @time fi_η,s_η = DIVAnd.DIVAndrun(mask,pmn,xyi,xyobs,robs,lenη,1., alphabc = 1);
+    @time fi,s_u = DIVAnd.DIVAndrun(mask_u,pmn_u,xyi_u,xyobs,robs,len,1., alphabc = 1);
+    @time fi,s_v = DIVAnd.DIVAndrun(mask_v,pmn_v,xyi_v,xyobs,robs,len,1., alphabc = 1);
+
+    #@show sum(abs.(s_u.iB))
     iB = blockdiag(ratio * s_η.iB,s_u.iB,s_v.iB)
 
+    #@show sum(iB)
+    #@show sum(abs.(iB))
+    #@show sum(iB.^2)
     # ignore cross-validation points in analysis
 
     if isa(epsilon2,Number)
@@ -194,6 +210,7 @@ function DIVAndrun_hfradar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;
     iP = iB + H' * (R \ H)
 
     Pxa = H' * (R \ yo)
+    #@show sum(Pxa.^2)
 
     if eps2_boundary_constrain != -1
         Hboundary = DIVAnd.sparse_pack(sv,(falses(mask),boundary_u,boundary_v))
@@ -271,6 +288,8 @@ function DIVAndrun_hfradar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;
     residual[:] .= NaN
     residual[valid] = H*fi - yo
 
+    #@show sum(uri[:,:,2].^2)
+    #display(uri[:,:,2])
 
     return uri,vri,ηi
 end
@@ -442,6 +461,8 @@ function cverr(
     ηri[:] .= NaN
     res[:] .= NaN
 
+    #@show fun(50)
+    #@show ncv
     output = pmap(fun,ncv)
     #output = map(fun,ncv)
     #@show size(output),size(ncv)
