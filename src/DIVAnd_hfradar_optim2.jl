@@ -2,7 +2,7 @@
 @everywhere using GeoMapping
 @everywhere import DIVAnd_hfradar
 @everywhere using NCDatasets
-@everywhere using DataArrays
+@everywhere using Statistics
 @everywhere using BlackBoxOptim
 @everywhere import MAT
 import PhysOcean
@@ -29,8 +29,8 @@ if "2D_len" in cases
         mask2d,h,(x[1],x[1],0.),(0.,0.,3600.),x[2],-1,-1,-1,0.,1.; selection=selection)
 
     res = bboptimize(cverr2D;
-                     SearchRange = [(2e3,20e3),
-                                    (1e-5,1e-3)],
+                     SearchRange = [(2e3,50e3),
+                                    (1e-5,1e-1)],
                      NumDimensions = 2, TargetFitness=1e-4)
 
     xopt = best_candidate(res)
