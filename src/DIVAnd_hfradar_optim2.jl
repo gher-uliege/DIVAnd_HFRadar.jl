@@ -37,6 +37,7 @@ if "2D" in cases
                          (2e3,50e3),
                          (1e-5,1e-1),
                      ],
+                     MaxSteps = 500,
                      NumDimensions = 2, TargetFitness=1e-4)
 
     xopt = best_candidate(res)
@@ -63,9 +64,10 @@ if "2D_bc" in cases
     res = bboptimize(cverr2D_bc;
                      SearchRange = [
                          (2e3,50e3),
-                         (1e-5,1e-3),
+                         (1e-5,1e-1),
                          (1e-2,10.),
                      ],
+                     MaxSteps = 500,
                      NumDimensions = 3, TargetFitness=1e-4)
 
     xopt = best_candidate(res)
@@ -92,6 +94,7 @@ if "2D_div" in cases
                          (1e-5,1e-4),
                          (1e8,1e9),
                      ],
+                     MaxSteps = 500,
                      NumDimensions = 3, TargetFitness=1e-4)
 
     xopt = best_candidate(res)
@@ -118,6 +121,7 @@ if "3D" in cases
                          (0.5*60*60,10*60*60.),
                          (1e-2,1.),
                      ],
+                     MaxSteps = 500,
                      NumDimensions = 3, TargetFitness=1e-4)
 
     xopt = best_candidate(res)
@@ -142,9 +146,10 @@ if "3D_Coriolis" in cases
     res = bboptimize(cverr3D_Coriolis;
                      SearchRange = [
                          (2e3,50e3),
-                         (1e-5,1e-3),
+                         (1e-5,1e-1),
                          (1e-5,1e-2),
                      ],
+                     MaxSteps = 500,
                      NumDimensions = 3, TargetFitness=1e-4)
 
     xopt = best_candidate(res)
@@ -168,10 +173,11 @@ if "3D_Coriolis_geo" in cases
     res = bboptimize(cverr3D_Coriolis_geo;
                      SearchRange = [
                          (2e3,50e3),
-                         (1e-5,1e-3),
+                         (1e-5,1e-1),
                          (1e-6,1e-4),
                          (1.,50.),
                      ],
+                     MaxSteps = 500,
                      NumDimensions = 4, TargetFitness=1e-4)
 
     xopt = best_candidate(res)
@@ -194,10 +200,11 @@ if "3D_Coriolis_geo_gp" in cases
     res = bboptimize(cverr3D_Coriolis_geo_gp;
                      SearchRange = [
                          (2e3,50e3),
-                         (1e-5,1e-3),
+                         (1e-5,1e-1),
                          (1e-5,1e-2),
                          (1e-2,2.),
                      ],
+                     MaxSteps = 500,
                      NumDimensions = 4, TargetFitness=1e-4)
 
     xopt = best_candidate(res)
