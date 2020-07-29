@@ -213,7 +213,7 @@ function DIVAndrun_hfradar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;
     #@show sum(Pxa.^2)
 
     if eps2_boundary_constrain != -1
-        Hboundary = DIVAnd.sparse_pack(sv,(falses(mask),boundary_u,boundary_v))
+        Hboundary = DIVAnd.sparse_pack(sv,(falses(size(mask)),boundary_u,boundary_v))
         Rboundary = eps2_boundary_constrain * Diagonal(ones(size(Hboundary,1)))
         yoboundary = zeros(size(Hboundary,1))
 
