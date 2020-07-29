@@ -246,7 +246,7 @@ function DIVAndrun_hfradar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;
 
         # the first block is the surface elevation and it is not used
         # in the computation of the divergence
-        UP = blockdiag(spzeros(0,sum(mask)),Pu',Pv');
+        UP = blockdiag(spzeros(0,sum(mask)),copy(Pu'),copy(Pv'));
         Hdiv = [DUx*TUy*Iu   DVy*TVx*Iv] * UP;
         Rdiv = eps2_div_constrain * Diagonal(ones(size(Hdiv,1)))
 
