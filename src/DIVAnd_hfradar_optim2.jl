@@ -8,8 +8,8 @@ using Distributed
 @everywhere import MAT
 import PhysOcean
 
-
-@everywhere include("DIVAnd_hfradar_load.jl")
+@everywhere include(joinpath(dirname(@__FILE__),"DIVAnd_hfradar_load.jl"))
+#include("DIVAnd_hfradar_load.jl")
 
 
 const postfix = get(ENV,"SLURM_JOBID","")
@@ -173,7 +173,7 @@ if "3D_Coriolis_geo" in cases
     res = bboptimize(cverr3D_Coriolis_geo;
                      SearchRange = [
                          (2e3,50e3),
-                         (1e-5,1e-1),
+                         (1e-3,1e-1),
                          (1e-6,1e-4),
                          (1.,50.),
                      ],
@@ -219,5 +219,5 @@ end
 
 
 
-@show "done"
+print("done")
 #processall()
