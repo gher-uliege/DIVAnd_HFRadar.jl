@@ -175,7 +175,8 @@ if "3D_Coriolis_geo" in cases
                      SearchRange = [
                          (2e3,50e3),
                          (1e-3,1e-1),
-                         (1e-6,1e-4),
+                         #(1e-6,1e-4),
+                         (1e-3,1e-1),
                          (1.,50.),
                      ],
                      MaxSteps = 500,
