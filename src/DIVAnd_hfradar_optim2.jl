@@ -7,6 +7,7 @@ using Distributed
 @everywhere using BlackBoxOptim
 @everywhere import MAT
 import PhysOcean
+import JSON
 
 @everywhere include(joinpath(dirname(@__FILE__),"DIVAnd_hfradar_load.jl"))
 #include("DIVAnd_hfradar_load.jl")
@@ -90,8 +91,8 @@ if "2D_div" in cases
 
     res = bboptimize(cverr2D_div;
                      SearchRange = [
-                         (2e3,50e3),
-                         (1e-5,1e-4),
+                         (2e3,80e3),
+                         (1e-5,1e-1),
                          (1e8,1e9),
                      ],
                      MaxSteps = 500,
