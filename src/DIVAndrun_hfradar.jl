@@ -506,5 +506,6 @@ function cverr(
         η[:] = ηri
     end
 
+    GC.gc()
     return cv_err
 end
