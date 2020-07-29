@@ -27,8 +27,8 @@ Create a sparse matrix which extract all elements of a state vector correspond t
 masks is a tulple of boolean mask.
 """
 function DIVAnd.sparse_pack(sv,masks)
-    j = vcat([find(masks[i])+sv.ind[i]  for i in 1:length(masks)]...)
-    return sparse(1:length(j),j,ones(j),length(j),sv.n)
+    j = vcat([findall(@view masks[i][:]) .+ sv.ind[i]  for i in 1:length(masks)]...)
+    return sparse(1:length(j),j,ones(size(j)),length(j),sv.n)
 end
 
 
@@ -437,7 +437,7 @@ function cverr(
         error("unknown selection")
     end
 
-    #ncv = find(sum(flagcv_all,[1 2 4])[:] .> 0)
+    #ncv = findall(sum(flagcv_all,[1 2 4])[:] .> 0)
 
     fun(ncenter) = cv_rec(ncenter,Δn,
                           xobs_all,yobs_all,robs_all,directionobs_all,flagcv_all,sitenames,
