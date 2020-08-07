@@ -34,7 +34,7 @@ function DIVAnd_hfradar_save(fname,lonr,latr,timerange,uri,vri,ηri)
         nceta[:] = MArray(ηri)
     end
 
-
+    return nothing
 end
 
 export DIVAnd_hfradar_save
