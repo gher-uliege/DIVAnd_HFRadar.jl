@@ -437,11 +437,11 @@ function cverr(
     eps2_boundary_constrain,
     eps2_div_constrain,
     eps2_Coriolis_constrain,
-    g,ratio; u = [], v = [], η = [], selection = :cv)
+    g,ratio; u = [], v = [], η = [], selection = :cv,
+    Δn = 1,     # time window
+)
 
 
-    # time window
-    Δn = 1
 
     # DEBUG only 1:3
 
@@ -482,7 +482,8 @@ function cverr(
     res[:] .= NaN
 
     #@show fun(50)
-    #@show ncv
+    @show length(ncv)
+    @show ncv
     output = pmap(fun,ncv)
     #output = map(fun,ncv)
     #@show size(output),size(ncv)
