@@ -193,28 +193,38 @@ if "3D_Coriolis_geo" in cases
 end
 
 if "3D_Coriolis_geo_eta_optim2" in cases
+
+    Δn = 1
+    Δn = 2
+    Δn = 3
+    @show Δn
     # optmize lenxy and epsilon2 div and lent
     cverr3D_Coriolis_geo(x) = DIVAnd_hfradar.cverr(
         xobs_all,yobs_all,robs_all,directionobs_all,flagcv_all,sitenames,
         lonr,latr,timerange,
-        mask2d,htot,(x[1],x[1],0.),(0*x[2],0*x[2],24*60*60*x[3]),x[4],-1,-1,x[5],g_barotropic,x[6]; selection=selection)
+        mask2d,htot,
+        #(x[1],x[1],0.),(0*x[2],0*x[2],24*60*60*x[3]),x[4],-1,-1,x[5],g_barotropic,x[6]; 
+        (x[1],x[1],0.),(0.,0.,24*60*60*x[2]),x[3],-1,-1,x[4],g_barotropic,x[5]; 
+        selection=selection, Δn = Δn)
 
     res = bboptimize(cverr3D_Coriolis_geo;
                      SearchRange = [
                          (2e3,50e3), # lenxy u,v
-                         (2e3,50e3),  # lenxy eta
+                         #(2e3,50e3),  # lenxy eta
                          (3.,12.),  # lent eta
                          (1e-3,1e-1), # epsilon obs
                          (1e-3,1e-1), # epsilon Coriolis_geo
                          (1.,50.), # ratio
                      ],
                      MaxSteps = 500,
-                     NumDimensions = 6, TargetFitness=1e-4)
+                     #NumDimensions = 6,
+                     NumDimensions = 5,
+                     TargetFitness=1e-4)
 
     xopt = best_candidate(res)
     @show xopt
 
-    open("cverr3D_Coriolis_geo$(postfix).json","w") do f
+    open("cverr3D_Coriolis_geo_Δn$(Δn)_$(postfix).json","w") do f
         JSON.print(f,
                    Dict("xopt" => xopt,
                         "best_fitness" => best_fitness(res)));
