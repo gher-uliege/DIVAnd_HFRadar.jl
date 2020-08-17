@@ -17,7 +17,7 @@ include("DIVAnd_hfradar_load.jl")
 # robs_all = robs_all .- mr;
 
 selection = :all
-selection = :debug
+#selection = :debug
 #selection = :cv
 
 postfix = "rg50"
@@ -35,6 +35,8 @@ vri = Array{Float64,3}(undef,(length(lonr),length(latr),length(timerange)))
 #cases = ["2D","2D_bc","2D_div","3D","3D_Coriolis","3D_Coriolis_geo","3D_Coriolis_geo_gp"]
 
 cases = ["3D_Coriolis_geo"]
+cases = ["3D_Coriolis_geo_eta_optim2"]
+
 c = cases[1]
 #for c in cases
 #=
@@ -95,6 +97,8 @@ cverr3D_Coriolis_geo(x) = DIVAnd_hfradar.cverr(
 
 =#
 
+
+#=
 DIVAnd_hfradar.cverr(
         xobs_all,yobs_all,robs_all,directionobs_all,flagcv_all,sitenames,
         lonr,latr,timerange,
@@ -111,7 +115,32 @@ DIVAnd_hfradar.cverr(
         selection=selection,u = uri, v = vri, η = ηri)
 
 
+=#
 
+
+docv = true
+docv = false
+
+if !docv
+    @info "disable cross-validation; use all data"
+    flagcv_all .= false
+end
+
+if "3D_Coriolis_geo_eta_optim2" in cases
+    # optmize lenxy and epsilon2 div and lent
+    cverr3D_Coriolis_geo(x) = DIVAnd_hfradar.cverr(
+        xobs_all,yobs_all,robs_all,directionobs_all,flagcv_all,sitenames,
+        lonr,latr,timerange,
+        mask2d,htot,(x[1],x[1],0.),(0*x[2],0*x[2],24*60*60*x[3]),x[4],-1,-1,x[5],g_barotropic,x[6]; selection=selection,
+        u = uri, v = vri, η = ηri
+    )
+
+end
+
+
+    xopt = [16291.007298025252, 14603.129071943038, 7.906700502571824, 0.011196566797111344, 0.007994164838883752, 13.598806798689564]
+
+    @show cverr3D_Coriolis_geo(xopt)
 
 
     #@show cverr3D_Coriolis_geo([5.981e-05 * 3600, 4.347e-05  * 3600, 1.138])
