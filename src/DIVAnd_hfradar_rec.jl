@@ -127,12 +127,19 @@ if !docv
 end
 
 if "3D_Coriolis_geo_eta_optim2" in cases
+    Δn = 1
+    Δn = 2
+    Δn = 3
+    Δn = 4
+    @show Δn
+
     # optmize lenxy and epsilon2 div and lent
     cverr3D_Coriolis_geo(x) = DIVAnd_hfradar.cverr(
         xobs_all,yobs_all,robs_all,directionobs_all,flagcv_all,sitenames,
         lonr,latr,timerange,
         mask2d,htot,(x[1],x[1],0.),(0*x[2],0*x[2],24*60*60*x[3]),x[4],-1,-1,x[5],g_barotropic,x[6]; selection=selection,
-        u = uri, v = vri, η = ηri
+        u = uri, v = vri, η = ηri,
+        Δn = Δn,
     )
 
 end
@@ -146,7 +153,7 @@ end
     #@show cverr3D_Coriolis_geo([5.981e-05 * 3600, 4.347e-05  * 3600, 1.138])
 
 
-    fname = expanduser("~/tmp/HFRadar-Ibiza/$(postfix)/$(c)-rerun.nc")
+    fname = expanduser("~/tmp/HFRadar-Ibiza/$(postfix)/$(c)-Deltan$(Δn)-rerun.nc")
 
     DIVAnd_hfradar.DIVAnd_hfradar_save(fname,lonr,latr,timerange,uri,vri,ηri)
 #end
