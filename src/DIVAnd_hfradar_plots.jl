@@ -1,15 +1,17 @@
 import DIVAnd_hfradar
 using NCDatasets
-using DataArrays
 import MAT
 import PhysOcean
 using PyPlot
 using OceanPlot
 using GeoMapping
-using JLD
+using Statistics
+using DIVAnd
 
 include("DIVAnd_hfradar_save.jl")
 include("DIVAnd_hfradar_load.jl")
+include("hfradar_plot.jl");
+
 
 # # compute and remove mean
 # robs2 = copy(robs_all)
@@ -17,10 +19,23 @@ include("DIVAnd_hfradar_load.jl")
 # mr = PhysOcean.nanmean(robs2,3);
 # robs_all = robs_all .- mr;
 
-selection = :cv
 
 figdir = expanduser("~/Doc/DIVAnd_hfradar/Fig/")
+fname = expanduser("~/tmp/HFRadar-Ibiza/rg50/2D.nc")
 
+xi,yi = DIVAnd.ndgrid(lonr,latr)
+n = 52;
+
+ds = NCDataset(fname)
+uri = nomissing(ds["u"][:,:,:],NaN);
+vri = nomissing(ds["v"][:,:,:],NaN);
+close(ds)
+
+hfradar_plot(xi,yi,timerange[n],uri[:,:,n],vri[:,:,n],
+             xobs_all,yobs_all,robs_all[:,:,n,:],directionobs_all[:,:,n,:],sitenames,siteorigin)
+
+
+#=
 selection = :debug
 #selection = :all
 
@@ -67,3 +82,4 @@ savefig("$(figdir)/DIVAnd_hfradar_2D.svg")
 
 # savefig("$(figdir)/DIVAnd_hfradar_3D_Coriolis_geo.png")
 # savefig("$(figdir)/DIVAnd_hfradar_3D_Coriolis_geo.svg")
+=#
