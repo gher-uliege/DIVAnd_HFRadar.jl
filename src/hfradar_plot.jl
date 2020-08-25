@@ -38,14 +38,14 @@ function hfradar_plot(
 
         longitude,latitude = siteorigin[site]
 
-        bearingi = GeoMapping.azimuth(latitude,longitude,yi,xi)
-        directioni = bearingi+180
+        bearingi = GeoMapping.azimuth.(latitude,longitude,yi,xi)
+        directioni = bearingi .+ 180
 
         ri = uri .* sin.(directioni * pi/180) + vri .* cos.(directioni * pi/180)
 
         #subplot(2,2,2+n)
         subplot(1,3,1+n)
-        pcol(xi,yi,ri; cmap=cmap)
+        pcolor(xi,yi,ri; cmap=cmap)
 
         plotcoastline()
         #scatter(xobsn,yobsn,20,robsn,edgecolor="none")
@@ -59,7 +59,7 @@ function hfradar_plot(
     end
 
     fig = gcf()
-    cbaxes = fig[:add_axes]([0.4, 0.1, 0.5, 0.03])
+    cbaxes = fig.add_axes([0.4, 0.1, 0.5, 0.03])
     colorbar(cax = cbaxes,orientation="horizontal")
 
 #    savefig("DIVAnd_hfradar_2D.png"; dpi=200)
