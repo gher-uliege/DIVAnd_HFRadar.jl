@@ -106,6 +106,7 @@ r = u * sin(α) + v * cos(α)
 u = -r * sin(β)
 v = -r * cos(β)
 
+For HF radar, r is positive if velocity is pointing *towards* the radar site.
 r, u, v, direction and β consistent with the CODAR convention of the ruv files
 
 """
