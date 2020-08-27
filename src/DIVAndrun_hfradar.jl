@@ -1,4 +1,5 @@
 using JLD
+#using PyPlot
 
 function spobsoper_radvel(sv,modelgrid,Xobs,varindexu,varindexv,direction)
 
@@ -8,7 +9,6 @@ function spobsoper_radvel(sv,modelgrid,Xobs,varindexu,varindexv,direction)
 
     Hu,outu,outboxu = DIVAnd.sparse_interp_g(modelgrid[varindexu],sv.mask[varindexu],Xobs)
     Hv,outv,outboxv = DIVAnd.sparse_interp_g(modelgrid[varindexv],sv.mask[varindexv],Xobs)
-
     d = direction[:]*pi/180
 
     Hgridu = spzeros(length(Xobs[1]),sv.n)
@@ -27,7 +27,7 @@ Create a sparse matrix which extract all elements of a state vector correspond t
 masks is a tulple of boolean mask.
 """
 function DIVAnd.sparse_pack(sv,masks)
-    j = vcat([findall(@view masks[i][:]) .+ sv.ind[i]  for i in 1:length(masks)]...)
+    j = vcat([findall(@view masks[i][sv.mask[i]]) .+ sv.ind[i]  for i in 1:length(masks)]...)
     return sparse(1:length(j),j,ones(size(j)),length(j),sv.n)
 end
 
@@ -160,6 +160,9 @@ function DIVAndrun_hfradar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;
     # boundary_psi is unused
     boundary_u, boundary_v, boundary_psi = stagger_mask(mask,xor)
 
+    # all boundary points are sea points
+    #@show all(mask_u[boundary_u])
+    #@show all(mask_v[boundary_v])
 
     varindexu = 1
     varindexv = 2
