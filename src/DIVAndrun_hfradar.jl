@@ -198,7 +198,7 @@ function DIVAndrun_hfradar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;
     # ignore cross-validation points in analysis
 
     if isa(epsilon2,Number)
-        R = Diagonal(epsilon2 * ones(yo))
+        R = Diagonal(epsilon2 * ones(size(yo)))
     else
         R = Diagonal(epsilon2[valid])
     end
