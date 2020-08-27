@@ -7,10 +7,11 @@ using OceanPlot
 using GeoMapping
 using Statistics
 using DIVAnd
+using Interpolations
 
 include("DIVAnd_hfradar_save.jl")
 include("DIVAnd_hfradar_load.jl")
-include("hfradar_plot.jl");
+#include("hfradar_plot.jl");
 
 
 # # compute and remove mean
@@ -20,8 +21,10 @@ include("hfradar_plot.jl");
 # robs_all = robs_all .- mr;
 
 
-figdir = expanduser("~/Doc/DIVAnd_hfradar/Fig/")
+figdir = expanduser("~/Doc/divand_hfradar/Fig/")
 fname = expanduser("~/tmp/HFRadar-Ibiza/rg50/2D.nc")
+#fname = expanduser("~/tmp/HFRadar-Ibiza/rg50/3D_Coriolis_geo_eta_optim2-Deltan6-rerun.nc")
+fname = expanduser("~/tmp/HFRadar-Ibiza/rg50/3D_Coriolis_pgrad.nc")
 
 xi,yi = DIVAnd.ndgrid(lonr,latr)
 n = 52;
@@ -31,8 +34,26 @@ uri = nomissing(ds["u"][:,:,:],NaN);
 vri = nomissing(ds["v"][:,:,:],NaN);
 close(ds)
 
-hfradar_plot(xi,yi,timerange[n],uri[:,:,n],vri[:,:,n],
+
+cmap = "jet"
+
+case = replace(basename(fname),r".nc$" => "")
+#=
+fig_suptitle = case
+    (xi,yi,datetime,uri,vri,
+    xobs,yobs,robs,directionobs,sitenames,siteorigin) = (xi,yi,timerange[n],uri[:,:,n],vri[:,:,n],
              xobs_all,yobs_all,robs_all[:,:,n,:],directionobs_all[:,:,n,:],sitenames,siteorigin)
+=#
+
+include("hfradar_plot.jl");
+
+hfradar_plot(xi,yi,timerange[n],uri[:,:,n],vri[:,:,n],
+             xobs_all,yobs_all,robs_all[:,:,n,:],directionobs_all[:,:,n,:],
+             sitenames,siteorigin;
+             fig_suptitle = case)
+
+
+savefig(joinpath(figdir,"DIVAnd_hfradar_diff_$(case).pdf"))
 
 
 #=
