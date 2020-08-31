@@ -107,8 +107,13 @@ u = -r * sin(β)
 v = -r * cos(β)
 
 For HF radar, r is positive if velocity is pointing *towards* the radar site.
-r, u, v, direction and β consistent with the CODAR convention of the ruv files
+r, u, v, direction and β consistent with the CODAR convention of the ruv files [1,2]:
 
+> A positive radial velocity is moving towards the SeaSonde, while a negative radial velocity is moving away from the SeaSonde.
+
+
+[1] https://web.archive.org/web/20181009090405/https://cordc.ucsd.edu/projects/mapping/documents/radFileFormats_20050408.pdf
+[2] https://web.archive.org/web/20200125080518/http://support.codar.com/Technicians_Information_Page_for_SeaSondes/Docs/GuidesToFileFormats/File_LonLatUV_RDL_TOT_ELP.pdf
 """
 function DIVAndrun_hfradar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;
                         eps2_boundary_constrain = -1,
