@@ -3,7 +3,7 @@ using NCDatasets
 import MAT
 import PhysOcean
 using GeoMapping
-using JLD
+#using JLD
 using Glob
 using Statistics
 using DelimitedFiles
@@ -131,6 +131,8 @@ if "3D_Coriolis_geo_eta_optim2" in cases
     Δn = 2
     Δn = 3
     Δn = 4
+    Δn = 5
+    Δn = parse(Int,ENV["DELTA_N"])
     @show Δn
 
     # optmize lenxy and epsilon2 div and lent
@@ -146,6 +148,7 @@ end
 
 
     xopt = [16291.007298025252, 14603.129071943038, 7.906700502571824, 0.011196566797111344, 0.007994164838883752, 13.598806798689564]
+    xopt = [9125.976646579633,                  0,  11.91390102142871,0.024069234801430514,0.012465245160690287,6.564149106945681]
 
     @show cverr3D_Coriolis_geo(xopt)
 
@@ -153,7 +156,7 @@ end
     #@show cverr3D_Coriolis_geo([5.981e-05 * 3600, 4.347e-05  * 3600, 1.138])
 
 
-    fname = expanduser("~/tmp/HFRadar-Ibiza/$(postfix)/$(c)-Deltan$(Δn)-rerun.nc")
+    fname = expanduser("~/tmp/HFRadar-Ibiza/$(postfix)/$(c)-Deltan$(Δn)-rerun-newopt.nc")
 
     DIVAnd_hfradar.DIVAnd_hfradar_save(fname,lonr,latr,timerange,uri,vri,ηri)
 #end
