@@ -93,7 +93,7 @@ if "2D_div" in cases
                      SearchRange = [
                          (2e3,80e3),
                          (1e-5,1e-1),
-                         (1e8,1e9),
+                         (1e9,1e12),
                      ],
                      MaxSteps = 500,
                      NumDimensions = 3, TargetFitness=1e-4)
