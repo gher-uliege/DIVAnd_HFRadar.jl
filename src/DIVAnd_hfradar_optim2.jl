@@ -119,7 +119,7 @@ if "3D" in cases
     res = bboptimize(cverr3D;
                      SearchRange = [
                          (2e3,50e3),
-                         (0.5*60*60,10*60*60.),
+                         (0.5*60*60,60*60.),
                          (1e-2,1.),
                      ],
                      MaxSteps = 500,
@@ -251,6 +251,37 @@ if "3D_Coriolis_geo_eta_optim_lenxy" in cases
                      ],
                      MaxSteps = 500,
                      NumDimensions = 6, TargetFitness=1e-4)
+
+    xopt = best_candidate(res)
+    @show xopt
+
+    open("cverr3D_Coriolis_geo$(postfix).json","w") do f
+        JSON.print(f,
+                   Dict("xopt" => xopt,
+                        "best_fitness" => best_fitness(res)));
+    end
+end
+
+
+if "3D_Coriolis_geo_eta_optim_lenxy_lent" in cases
+    # optmize lenxy and epsilon2 div and lent
+    cverr3D_Coriolis_geo(x) = DIVAnd_hfradar.cverr(
+        xobs_all,yobs_all,robs_all,directionobs_all,flagcv_all,sitenames,
+        lonr,latr,timerange,
+        mask2d,htot,(x[1],x[1],x[2]),(x[3],x[3],24*60*60*x[4]),x[6],-1,-1,x[6],g_barotropic,x[7]; selection=selection)
+
+    res = bboptimize(cverr3D_Coriolis_geo;
+                     SearchRange = [
+                         (2e3,50e3), # lenxy u,v
+                         (0.5*60*60,60*60.), # lent
+                         (2e3,50e3),  # lenxy eta
+                         (3.,12.),  # lent eta
+                         (1e-3,1e-1), # epsilon obs
+                         (1e-3,1e-1), # epsilon Coriolis_geo
+                         (1.,50.), # ratio
+                     ],
+                     MaxSteps = 500,
+                     NumDimensions = 7, TargetFitness=1e-4)
 
     xopt = best_candidate(res)
     @show xopt
