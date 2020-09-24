@@ -173,7 +173,7 @@ end
     cverr3D(x) = DIVAnd_hfradar.cverr(
         xobs_all,yobs_all,robs_all,directionobs_all,flagcv_all,sitenames,
         lonr,latr,timerange,
-        mask2d,h,(x[1],x[1],x[2]),(0.,0.,3600.),x[3],-1,-1,-1,0.,1.; selection=selection
+        mask2d,h,(x[1],x[1],x[2]),(0.,0.,3600.),x[3],-1,-1,-1,0.,1.; selection=selection,
         u = uri, v = vri, η = ηri,
         Δn = Δn,
     )
