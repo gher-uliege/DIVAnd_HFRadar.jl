@@ -36,6 +36,7 @@ vri = Array{Float64,3}(undef,(length(lonr),length(latr),length(timerange)))
 
 cases = ["3D_Coriolis_geo"]
 cases = ["3D_Coriolis_geo_eta_optim2"]
+cases = ["3D"]
 
 c = cases[1]
 #for c in cases
@@ -126,6 +127,8 @@ if !docv
     flagcv_all .= false
 end
 
+
+#=
 if "3D_Coriolis_geo_eta_optim2" in cases
     Δn = 1
     Δn = 2
@@ -160,3 +163,23 @@ end
 
     DIVAnd_hfradar.DIVAnd_hfradar_save(fname,lonr,latr,timerange,uri,vri,ηri)
 #end
+
+
+=#
+
+
+Δn = 1
+
+    cverr3D(x) = DIVAnd_hfradar.cverr(
+        xobs_all,yobs_all,robs_all,directionobs_all,flagcv_all,sitenames,
+        lonr,latr,timerange,
+        mask2d,h,(x[1],x[1],x[2]),(0.,0.,3600.),x[3],-1,-1,-1,0.,1.; selection=selection
+        u = uri, v = vri, η = ηri,
+        Δn = Δn,
+    )
+xopt = [2134.307509439117,3526.195062616695,0.15101748832935727]
+    @show cverr3D(xopt)
+
+fname = expanduser("~/tmp/HFRadar-Ibiza/$(postfix)/$(c)-Deltan$(Δn)-rerun.nc")
+
+    DIVAnd_hfradar.DIVAnd_hfradar_save(fname,lonr,latr,timerange,uri,vri,ηri)
