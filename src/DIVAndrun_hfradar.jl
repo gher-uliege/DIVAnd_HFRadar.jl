@@ -157,19 +157,21 @@ r, u, v, direction and β consistent with the CODAR convention of the ruv files 
 
 
 """
-function DIVAndrun_hfradar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;
-                        eps2_boundary_constraint = -1,
-                        eps2_div_constraint = -1,
-                        eps2_Coriolis_constraint = -1,
-                        f = 0.001,
-                        residual = zeros(size(robs)),
-                        g = 0.,
-                        ratio = 100,
-                        lenη = (000.0, 000.0, 24 * 60 * 60. * 10),
-                        )
+function DIVAndrun_hfradar(
+    mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;
+    eps2_boundary_constraint = -1,
+    eps2_div_constraint = -1,
+    eps2_Coriolis_constraint = -1,
+    f = 0.001,
+    residual = zeros(size(robs)),
+    g = 0.,
+    ratio = 100,
+    lenη = (000.0, 000.0, 24 * 60 * 60. * 10),
+    maxit = 100000,
+    tol = 1e-6,
+)
 
-
-
+    # size of the domain
     sz = size(mask)
 
     if any([size(pm) != sz for pm in pmn])
@@ -263,7 +265,6 @@ function DIVAndrun_hfradar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;
     #@show sum(iB)
     #@show sum(abs.(iB))
     #@show sum(iB.^2)
-    # ignore cross-validation points in analysis
 
     if isa(epsilon2,Number)
         R = Diagonal(epsilon2 * ones(size(yo)))
@@ -324,10 +325,7 @@ function DIVAndrun_hfradar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;
         iP = iP + Hdiv' * (Rdiv \ Hdiv)
     end
 
-    #@show @__LINE__,@__FILE__
-
     if eps2_Coriolis_constraint != -1
-        #if false
         x0 = zeros(sv.n) # not used for a linear constrain
         ti = xyi[3]
         t = ti[1,1,:]
@@ -335,7 +333,6 @@ function DIVAndrun_hfradar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;
         # scaling is one expect for the part relative to the elevation
         scaling = ones(sv.n)
         scaling[1:s_η.n] .= ratio
-        #scaling[1:s_η.n] .= 100
 
         function iPfun(x,iPx)
             iPx[:] = iP*x + (1/eps2_Coriolis_constraint) *
@@ -344,14 +341,14 @@ function DIVAndrun_hfradar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;
                         sv,config,t,x0,x))
         end
 
-        maxit = 50000
-        maxit = 100000
         fi,success,niter = DIVAnd.conjugategradient(
-            iPfun,Pxa,tol=1e-6,maxit = maxit,
+            iPfun,Pxa,tol=tol,maxit = maxit,
             #        progress = DIVAnd.cgprogress
         )
 
-        @show success,niter
+        if !success
+            @show "No convergence after $niter iterations (success=$success). Consider to increase the maximum number of iterations maxit or reduce the tolerence tol (currently maxit=$maxit; tol=$tol) "
+        end
     else
         fi = iP \ Pxa
     end
@@ -395,7 +392,6 @@ function cv_rec(
     imax = size(xobs_all,1)
     jmax = size(xobs_all,2)
     nsites = length(sitenames)
-    #@show @__LINE__,@__FILE__
 
     #ncenter = ncv[l]
     @show ncenter
@@ -418,9 +414,9 @@ function cv_rec(
         inner = (1,1,length(ntimes),1))[valid]
 
     #sitenames_ = sitenames[ind2sub(size(valid),findall(valid))[4]]
-
-
-    tobs = repeat(reshape(converttime.(timerange[ntimes]),(1,1,length(ntimes),1)),inner = (imax,jmax,1,nsites))[valid];
+    tobs = repeat(reshape(
+        converttime.(timerange[ntimes]),(1,1,length(ntimes),1)),
+                  inner = (imax,jmax,1,nsites))[valid];
 
     residual = fill(NaN,size(robs))
 
@@ -458,11 +454,8 @@ function cv_rec(
 
 
     sz = size(mask)
-    #h = ones(sz)
-
-
+    # give zero weight to cross-validation points
     epsilon2[forcv] .= Inf
-
 
     uri_temp,vri_temp,ηri_temp = DIVAndrun_hfradar(
         mask,h3d,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;
@@ -476,13 +469,15 @@ function cv_rec(
         ratio = ratio
     )
 
-
     residual4 = fill(NaN,(imax,jmax,length(ntimes),nsites))
     residual4[valid] = residual
     #res[:,:,ncenter,:] = residual4[:,:,(end+1) ÷ 2,:]
-
     #return residual4[:,:,(end+1) ÷ 2,:]
-    return uri_temp[:,:,(end+1) ÷ 2],vri_temp[:,:,(end+1) ÷ 2],ηri_temp[:,:,(end+1) ÷ 2],residual4[:,:,(end+1) ÷ 2,:]
+
+    return (uri_temp[:,:,(end+1) ÷ 2],
+            vri_temp[:,:,(end+1) ÷ 2],
+            ηri_temp[:,:,(end+1) ÷ 2],
+            residual4[:,:,(end+1) ÷ 2,:])
 end
 
 
@@ -508,19 +503,18 @@ function cverr(
     eps2_div_constraint,
     eps2_Coriolis_constraint,
     g,ratio;
-    u = [], v = [], η = [], selection = :cv,
+    u = [], v = [], η = [],
+    selection = :cv,
     Δn = 1,     # time window
+    logfilename = "DIVAnd-hfradar-$(Dates.now()).log"
 )
-
-    # DEBUG only 1:3
 
     if selection == :all
         ncv = collect(1:size(flagcv_all,3))
     elseif selection == :cv
         ncv = findall(sum(flagcv_all,dims = [1,2,4])[:] .> 0)
     elseif selection == :debug
-        @show "only 2"
-
+        @show "only 2 time instance for debugging"
         ncv = findall(sum(flagcv_all,dims = [1,2,4])[:] .> 0)[1:2]
     else
         error("unknown selection")
@@ -528,17 +522,18 @@ function cverr(
 
     #ncv = findall(sum(flagcv_all,[1 2 4])[:] .> 0)
 
-    fun(ncenter) = cv_rec(ncenter,Δn,
-                          xobs_all,yobs_all,robs_all,directionobs_all,flagcv_all,sitenames,
-                          lonr,latr,timerange,
-                          mask2d,h,
-                          len,lenη,eps2,
-                          eps2_boundary_constraint,
-                          eps2_div_constraint,
-                          eps2_Coriolis_constraint,
-                          g,
-                          ratio
-                          )
+    fun(ncenter) = cv_rec(
+        ncenter,Δn,
+        xobs_all,yobs_all,robs_all,directionobs_all,flagcv_all,sitenames,
+        lonr,latr,timerange,
+        mask2d,h,
+        len,lenη,eps2,
+        eps2_boundary_constraint,
+        eps2_div_constraint,
+        eps2_Coriolis_constraint,
+        g,
+        ratio
+    )
 
     uri = Array{Float64}(undef,(length(lonr),length(latr),length(timerange)))
     vri = Array{Float64}(undef,(length(lonr),length(latr),length(timerange)))
@@ -562,11 +557,7 @@ function cverr(
     ηri[:,:,ncv] = cat([o[3] for o in output]...; dims = 4)
     res[:,:,ncv,:] = permutedims(cat([o[4] for o in output]...; dims = 4),[1,2,4,3])
 
-    #@show size(res),size(flagcv_all),size(output)
-    # 0.0652580579558992 without Coriolis and no div
-    # 0.05105108269989013 with f and g, no div
-
-    # over all RMS
+    # total RMS
     forcv_and_sea = flagcv_all .& (.!isnan.(res))
     cv_err = sqrt(mean(res[forcv_and_sea].^2))
     status = (len...,lenη...,eps2,
@@ -578,7 +569,7 @@ function cverr(
 
     @show status
 
-    open("temp-output$(get(ENV,"SLURM_JOB_NAME",""))$(get(ENV,"SLURM_JOBID","")).txt","a") do f
+    open(logfilename,"a") do f
         print(f,join(status,'\t'),"\n")
     end
 

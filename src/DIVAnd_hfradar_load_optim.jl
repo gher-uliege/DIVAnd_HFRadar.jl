@@ -10,8 +10,16 @@ function load_optim_param(c,postfix)
 
         d = data[n,:]
 
-        return RMS,Dict("lenxy" => d[1],"lent" => d[3], "lenetat" => d[6], "eps2" => d[7], "eps2_boundary_constraint" => d[8],
-                    "eps2_div_constraint" => d[9], "eps2_Coriolis_constraint" => d[10], "g" => d[11], "ratio" => d[12])
+        return RMS,Dict(
+            "lenxy" => d[1],
+            "lent" => d[3],
+            "lenetat" => d[6],
+            "eps2" => d[7],
+            "eps2_boundary_constraint" => d[8],
+            "eps2_div_constraint" => d[9],
+            "eps2_Coriolis_constraint" => d[10],
+            "g" => d[11],
+            "ratio" => d[12])
     end
 
     return NaN,Dict()
