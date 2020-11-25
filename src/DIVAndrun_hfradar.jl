@@ -1,6 +1,3 @@
-using JLD
-#using PyPlot
-
 function spobsoper_radvel(sv,modelgrid,Xobs,varindexu,varindexv,direction)
 
     #@show size(sv.mask[varindexu])
@@ -55,24 +52,45 @@ end
 
 """
 
-    DIVAnd_hfradar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;...)
+    DIVAndrun_hfradar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;...)
 
-HF Radar current analysis with DIVAnd and velocity contraints.
+HF Radar current analysis with DIVAnd and velocity constraints. The input
+parameters are:
 
-mask: true for sea points (false for land points) (3D-array)
-h: depth in meters (3D-array)
-pmn: inverse of the local resolution (tuple of three 3D-arrays)
-xyi: coordinates of the analysis grid (tuple of three 3D-arrays)
-xyobs: coordinates of the observations (tuple of three vectors)
-robs: radial velocity (vector)
-directionobs: angle α of the measured direction in degrees (vector) such that
+* `mask`: true for sea points (false for land points) (3D-array)
+* `h`: depth in meters (3D-array)
+* `pmn`: inverse of the local resolution (tuple of three 3D-arrays)
+* `xyi`: coordinates of the analysis grid (tuple of three 3D-arrays)
+* `xyobs`: coordinates of the observations (tuple of three vectors)
+* `robs`: radial velocity (vector)
+* `directionobs`: angle α of the measured direction in degrees (vector) such that (see below)
 
 ```math
-u\\_{obs} * sin(α) + v\\_{obs} * cos(α) ≈ robs
+u_{obs}  \\sin(α) + v_{obs}  \\cos(α) ≈ r_{obs}
 ```
 
-len,epsilon2
-f in  s⁻¹
+* `len`: the correlation length (a tuple of scalars)
+* `epsilon2`: error variance of the observation relative to the error variace of
+the background estimate.
+
+## Optional input parameters
+
+* `eps2_boundary_constraint` (default -1):
+* `eps2_div_constraint` (default -1):
+* `eps2_Coriolis_constraint` (default -1):
+* `f` (default 0.001 s⁻¹): Coriolis parameter. For a latitude ``φ``, we have on Earth :
+
+```math
+\\begin{aligned}
+    Ω =& 7.2921 \\; 10^{-5} rad/s \\\\
+    f =& 2 Ω \\sin(φ)
+\\end{aligned}
+```
+
+* `g` (default 0. m/s²): acceleration due to gravity. If g is zero, then the surface pressure is not considered; otherwise g should be set to 9.81.
+* `ratio` (default 100): normalization factor
+* `lenη`  (default 0, 0, 24 * 60 * 60. * 10): correlation length in space and time for the surface elevation
+* `residual`: an array of the same size as robs with the residual (output)
 
 
 ## Convention for the direction
@@ -81,53 +99,79 @@ bearing β: angle at radar station (*) between North a measuring point (+) count
 direction α: angle at measuring point between North and vector pointing to the radar station counted clockwise
 
 
+                    ↑ /
+                    |/
+             ↑      +--→ current vector (u,v)
+      North  |     / measurent point
+             |    /
+             |   /
+             |  /
+             |β/
+             |/
+             *
+       radar station
 
-                ↑ /
-                |/
-         ↑      +--→ current vector (u,v)
-  North  |     / measurent point
-         |    /
-         |   /
-         |  /
-         |β/
-         |/
-         *
-   radar station
+Sufficiently far from the poles, we have:
 
-direction α = bearing β + 180
+```math
+α ≈ β + 180
+```
 
-u zonal component, v meridional component
-u = r * sin(α)
-v = r * cos(α)
+The ``u`` zonal and ``v`` meridional velocity component are related to the radial current ``r`` and direction ``β`` by:
 
-r = u * sin(α) + v * cos(α)
+```math
+\\begin{aligned}
+u =& r \\sin(α) \\\\
+v =& r \\cos(α) \\\\
+\\end{aligned}
+```
+
+```math
+\\begin{aligned}
+r =& u  \\sin(α) + v  \\cos(α) \\\\
+\\tan(α) &= {u \\over v}
+\\end{aligned}
+```
 
 
-u = -r * sin(β)
-v = -r * cos(β)
-
-For HF radar, r is positive if velocity is pointing *towards* the radar site.
+For HF radar data, r is positive if the velocity is pointing *towards* the radar site.
 r, u, v, direction and β consistent with the CODAR convention of the ruv files [1,2]:
 
 > A positive radial velocity is moving towards the SeaSonde, while a negative radial velocity is moving away from the SeaSonde.
 
 
-[1] https://web.archive.org/web/20181009090405/https://cordc.ucsd.edu/projects/mapping/documents/radFileFormats_20050408.pdf
-[2] https://web.archive.org/web/20200125080518/http://support.codar.com/Technicians_Information_Page_for_SeaSondes/Docs/GuidesToFileFormats/File_LonLatUV_RDL_TOT_ELP.pdf
+!!! note
+    For the Coriolis force constrain and the surface pressure gradient
+    constrain, one need to include a time dimension.
+
+
+!!! info
+    If you see the error
+    `ERROR: PosDefException: matrix is not positive definite; Cholesky factorization failed.` you might need to check the values of your input parameters, in particular correlation, scale factors `pmn` and `epsilon2`.
+
+
+[1] [File Formats Used for CODAR Radial Data](https://web.archive.org/web/20181009090405/https://cordc.ucsd.edu/projects/mapping/documents/radFileFormats_20050408.pdf)
+
+[2] [Technicians Information Page for SeaSondes](https://web.archive.org/web/20200125080518/http://support.codar.com/Technicians_Information_Page_for_SeaSondes/Docs/GuidesToFileFormats/File_LonLatUV_RDL_TOT_ELP.pdf)
+
+
+
 """
-function DIVAndrun_hfradar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;
-                        eps2_boundary_constrain = -1,
-                        eps2_div_constrain = -1,
-                        eps2_Coriolis_constrain = -1,
-                        f = 0.001,
-                        residual = zeros(size(robs)),
-                        g = 0., # no pressure (testing)
-                        ratio = 100,
-                        lenη = (000.0, 000.0, 24 * 60 * 60. * 10)
-                        )
+function DIVAndrun_hfradar(
+    mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;
+    eps2_boundary_constraint = -1,
+    eps2_div_constraint = -1,
+    eps2_Coriolis_constraint = -1,
+    f = 0.001,
+    residual = zeros(size(robs)),
+    g = 0.,
+    ratio = 100,
+    lenη = (000.0, 000.0, 24 * 60 * 60. * 10),
+    maxit = 100000,
+    tol = 1e-6,
+)
 
-
-
+    # size of the domain
     sz = size(mask)
 
     if any([size(pm) != sz for pm in pmn])
@@ -192,18 +236,35 @@ function DIVAndrun_hfradar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;
     yo = robs[valid]
 
     #@show sum(mask), sum.(pmn), lenη
+    alphabc = 1
+    alpha = [1,3,3,1]
+    alpha = [0.001,2,1]
 
-    @time fi_η,s_η = DIVAnd.DIVAndrun(mask,pmn,xyi,xyobs,robs,lenη,1., alphabc = 1);
-    @time fi,s_u = DIVAnd.DIVAndrun(mask_u,pmn_u,xyi_u,xyobs,robs,len,1., alphabc = 1);
-    @time fi,s_v = DIVAnd.DIVAndrun(mask_v,pmn_v,xyi_v,xyobs,robs,len,1., alphabc = 1);
+    if  (ndims(mask) == 3) && (eps2_Coriolis_constraint != -1) && (g != 0)
+        fi_η,s_η = DIVAnd.DIVAndrun(mask,pmn,xyi,xyobs,robs,lenη,1., alphabc = 1, alpha=alpha);
+        η_iB = s_η.iB
+    else
+        η_iB = sparse(I,sum(mask),sum(mask))
+    end
+    fi,s_u = DIVAnd.DIVAndrun(mask_u,pmn_u,xyi_u,xyobs,robs,len,1., alphabc = 1, alpha=alpha);
+    fi,s_v = DIVAnd.DIVAndrun(mask_v,pmn_v,xyi_v,xyobs,robs,len,1., alphabc = 1, alpha=alpha);
 
     #@show sum(abs.(s_u.iB))
-    iB = blockdiag(ratio * s_η.iB,s_u.iB,s_v.iB)
+    iB = blockdiag(ratio * η_iB,s_u.iB,s_v.iB)
+
+    #@show sum(abs.(s_u.iB * 3600))
+    #@show sum(abs.(s_v.iB * 3600))
+    #@show sum(abs.(s_η.iB * 3100))
+
+    #3706.502790806167, 2889.2516005961907
+    # test
+    #@show "test"
+    #iB = blockdiag(ratio * s_η.iB * (3706.502790806167 * 2889.251600596190) ,s_u.iB * 3600.,s_v.iB * 3600.)
+    #iB = blockdiag(ratio * s_η.iB * (28000) ,s_u.iB * 3600.,s_v.iB * 3600.)
 
     #@show sum(iB)
     #@show sum(abs.(iB))
     #@show sum(iB.^2)
-    # ignore cross-validation points in analysis
 
     if isa(epsilon2,Number)
         R = Diagonal(epsilon2 * ones(size(yo)))
@@ -221,16 +282,16 @@ function DIVAndrun_hfradar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;
     Pxa = H' * (R \ yo)
     #@show sum(Pxa.^2)
 
-    if eps2_boundary_constrain != -1
+    if eps2_boundary_constraint != -1
         Hboundary = DIVAnd.sparse_pack(sv,(falses(size(mask)),boundary_u,boundary_v))
-        Rboundary = eps2_boundary_constrain * Diagonal(ones(size(Hboundary,1)))
+        Rboundary = eps2_boundary_constraint * Diagonal(ones(size(Hboundary,1)))
         yoboundary = zeros(size(Hboundary,1))
 
         iP += Hboundary' * (Rboundary \ Hboundary)
         Pxa +=  Hboundary' * (Rboundary \ yoboundary)
     end
 
-    if eps2_div_constrain != -1
+    if eps2_div_constraint != -1
         # divergence
         #   ∂hu/∂x + ∂hv/∂y  ≈ 0
         # cost function
@@ -257,34 +318,37 @@ function DIVAndrun_hfradar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;
         # in the computation of the divergence
         UP = blockdiag(spzeros(0,sum(mask)),copy(Pu'),copy(Pv'));
         Hdiv = [DUx*TUy*Iu   DVy*TVx*Iv] * UP;
-        Rdiv = eps2_div_constrain * Diagonal(ones(size(Hdiv,1)))
+        Rdiv = eps2_div_constraint * Diagonal(ones(size(Hdiv,1)))
 
         #@show size(Hdiv)
 
         iP = iP + Hdiv' * (Rdiv \ Hdiv)
     end
 
-    #@show @__LINE__,@__FILE__
-
-    if eps2_Coriolis_constrain != -1
-        #if false
+    if eps2_Coriolis_constraint != -1
         x0 = zeros(sv.n) # not used for a linear constrain
         ti = xyi[3]
         t = ti[1,1,:]
 
+        # scaling is one expect for the part relative to the elevation
+        scaling = ones(sv.n)
+        scaling[1:s_η.n] .= ratio
+
         function iPfun(x,iPx)
-            iPx[:] = iP*x + (1/eps2_Coriolis_constrain) *
+            iPx[:] = iP*x + (1/eps2_Coriolis_constraint) *
                 misfit_intertial_oscillation_geo_adj(
-                    sv,config,t,x0,misfit_intertial_oscillation_geo(
+                    sv,config,t,x0,scaling .* misfit_intertial_oscillation_geo(
                         sv,config,t,x0,x))
         end
 
         fi,success,niter = DIVAnd.conjugategradient(
-            iPfun,Pxa,tol=1e-6,maxit = 50000,
+            iPfun,Pxa,tol=tol,maxit = maxit,
             #        progress = DIVAnd.cgprogress
         )
 
-        @show success
+        if !success
+            @show "No convergence after $niter iterations (success=$success). Consider to increase the maximum number of iterations maxit or reduce the tolerence tol (currently maxit=$maxit; tol=$tol) "
+        end
     else
         fi = iP \ Pxa
     end
@@ -304,7 +368,7 @@ function DIVAndrun_hfradar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;
 end
 
 
-
+export DIVAndrun_hfradar
 
 function cv_rec(
     ncenter,Δn,
@@ -312,9 +376,9 @@ function cv_rec(
     lonr,latr,timerange,
     mask2d,h,
     len,lenη,eps2,
-    eps2_boundary_constrain,
-    eps2_div_constrain,
-    eps2_Coriolis_constrain,
+    eps2_boundary_constraint,
+    eps2_div_constraint,
+    eps2_Coriolis_constraint,
     g,
     ratio
 )
@@ -328,7 +392,6 @@ function cv_rec(
     imax = size(xobs_all,1)
     jmax = size(xobs_all,2)
     nsites = length(sitenames)
-    #@show @__LINE__,@__FILE__
 
     #ncenter = ncv[l]
     @show ncenter
@@ -351,9 +414,9 @@ function cv_rec(
         inner = (1,1,length(ntimes),1))[valid]
 
     #sitenames_ = sitenames[ind2sub(size(valid),findall(valid))[4]]
-
-
-    tobs = repeat(reshape(converttime.(timerange[ntimes]),(1,1,length(ntimes),1)),inner = (imax,jmax,1,nsites))[valid];
+    tobs = repeat(reshape(
+        converttime.(timerange[ntimes]),(1,1,length(ntimes),1)),
+                  inner = (imax,jmax,1,nsites))[valid];
 
     residual = fill(NaN,size(robs))
 
@@ -391,17 +454,14 @@ function cv_rec(
 
 
     sz = size(mask)
-    #h = ones(sz)
-
-
+    # give zero weight to cross-validation points
     epsilon2[forcv] .= Inf
-
 
     uri_temp,vri_temp,ηri_temp = DIVAndrun_hfradar(
         mask,h3d,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;
-        eps2_boundary_constrain = eps2_boundary_constrain,
-        eps2_div_constrain = eps2_div_constrain,
-        eps2_Coriolis_constrain = eps2_Coriolis_constrain,
+        eps2_boundary_constraint = eps2_boundary_constraint,
+        eps2_div_constraint = eps2_div_constraint,
+        eps2_Coriolis_constraint = eps2_Coriolis_constraint,
         f = f,
         g = g,
         residual = residual,
@@ -409,38 +469,52 @@ function cv_rec(
         ratio = ratio
     )
 
-
     residual4 = fill(NaN,(imax,jmax,length(ntimes),nsites))
     residual4[valid] = residual
     #res[:,:,ncenter,:] = residual4[:,:,(end+1) ÷ 2,:]
-
     #return residual4[:,:,(end+1) ÷ 2,:]
-    return uri_temp[:,:,(end+1) ÷ 2],vri_temp[:,:,(end+1) ÷ 2],ηri_temp[:,:,(end+1) ÷ 2],residual4[:,:,(end+1) ÷ 2,:]
+
+    return (uri_temp[:,:,(end+1) ÷ 2],
+            vri_temp[:,:,(end+1) ÷ 2],
+            ηri_temp[:,:,(end+1) ÷ 2],
+            residual4[:,:,(end+1) ÷ 2,:])
 end
 
+
+"""
+    DIVAnd_hfradar.cverr(
+        xobs_all,yobs_all,robs_all,directionobs_all,flagcv_all,sitenames,
+        lonr,latr,timerange,
+        mask2d,h,
+        len,lenη,eps2,
+        eps2_boundary_constraint,
+        eps2_div_constraint,
+        eps2_Coriolis_constraint,
+        g,ratio; u = [], v = [], η = [], selection = :cv)
+
+Cross-validation error
+"""
 function cverr(
     xobs_all,yobs_all,robs_all,directionobs_all,flagcv_all,sitenames,
     lonr,latr,timerange,
     mask2d,h,
     len,lenη,eps2,
-    eps2_boundary_constrain,
-    eps2_div_constrain,
-    eps2_Coriolis_constrain,
-    g,ratio; u = [], v = [], η = [], selection = :cv)
-
-
-    # time window
-    Δn = 1
-
-    # DEBUG only 1:3
+    eps2_boundary_constraint,
+    eps2_div_constraint,
+    eps2_Coriolis_constraint,
+    g,ratio;
+    u = [], v = [], η = [],
+    selection = :cv,
+    Δn = 1,     # time window
+    logfilename = "DIVAnd-hfradar-$(Dates.now()).log"
+)
 
     if selection == :all
         ncv = collect(1:size(flagcv_all,3))
     elseif selection == :cv
         ncv = findall(sum(flagcv_all,dims = [1,2,4])[:] .> 0)
     elseif selection == :debug
-        @show "only 2"
-
+        @show "only 2 time instance for debugging"
         ncv = findall(sum(flagcv_all,dims = [1,2,4])[:] .> 0)[1:2]
     else
         error("unknown selection")
@@ -448,17 +522,18 @@ function cverr(
 
     #ncv = findall(sum(flagcv_all,[1 2 4])[:] .> 0)
 
-    fun(ncenter) = cv_rec(ncenter,Δn,
-                          xobs_all,yobs_all,robs_all,directionobs_all,flagcv_all,sitenames,
-                          lonr,latr,timerange,
-                          mask2d,h,
-                          len,lenη,eps2,
-                          eps2_boundary_constrain,
-                          eps2_div_constrain,
-                          eps2_Coriolis_constrain,
-                          g,
-                          ratio
-                          )
+    fun(ncenter) = cv_rec(
+        ncenter,Δn,
+        xobs_all,yobs_all,robs_all,directionobs_all,flagcv_all,sitenames,
+        lonr,latr,timerange,
+        mask2d,h,
+        len,lenη,eps2,
+        eps2_boundary_constraint,
+        eps2_div_constraint,
+        eps2_Coriolis_constraint,
+        g,
+        ratio
+    )
 
     uri = Array{Float64}(undef,(length(lonr),length(latr),length(timerange)))
     vri = Array{Float64}(undef,(length(lonr),length(latr),length(timerange)))
@@ -471,7 +546,8 @@ function cverr(
     res[:] .= NaN
 
     #@show fun(50)
-    #@show ncv
+    @show length(ncv)
+    @show ncv
     output = pmap(fun,ncv)
     #output = map(fun,ncv)
     #@show size(output),size(ncv)
@@ -481,23 +557,19 @@ function cverr(
     ηri[:,:,ncv] = cat([o[3] for o in output]...; dims = 4)
     res[:,:,ncv,:] = permutedims(cat([o[4] for o in output]...; dims = 4),[1,2,4,3])
 
-    #@show size(res),size(flagcv_all),size(output)
-    # 0.0652580579558992 without Coriolis and no div
-    # 0.05105108269989013 with f and g, no div
-
-    # over all RMS
+    # total RMS
     forcv_and_sea = flagcv_all .& (.!isnan.(res))
     cv_err = sqrt(mean(res[forcv_and_sea].^2))
     status = (len...,lenη...,eps2,
-              eps2_boundary_constrain,
-              eps2_div_constrain,
-              eps2_Coriolis_constrain,
+              eps2_boundary_constraint,
+              eps2_div_constraint,
+              eps2_Coriolis_constraint,
               g,ratio,
               cv_err)
 
     @show status
 
-    open("temp-output$(get(ENV,"SLURM_JOB_NAME",""))$(get(ENV,"SLURM_JOBID","")).txt","a") do f
+    open(logfilename,"a") do f
         print(f,join(status,'\t'),"\n")
     end
 
