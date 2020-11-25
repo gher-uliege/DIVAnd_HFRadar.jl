@@ -57,7 +57,7 @@ end
 
     DIVAnd_hfradar.DIVAndrun_hfradar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;...)
 
-HF Radar current analysis with DIVAnd and velocity contraints. The input
+HF Radar current analysis with DIVAnd and velocity constraints. The input
 parameters are:
 
 * `mask`: true for sea points (false for land points) (3D-array)
