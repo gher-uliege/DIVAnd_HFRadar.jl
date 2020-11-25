@@ -234,18 +234,31 @@ function DIVAndrun_hfradar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;
     yo = robs[valid]
 
     #@show sum(mask), sum.(pmn), lenη
+    alphabc = 1
+    alpha = [1,3,3,1]
+    alpha = [0.001,2,1]
 
     if  (ndims(mask) == 3) && (eps2_Coriolis_constraint != -1) && (g != 0)
-        fi_η,s_η = DIVAnd.DIVAndrun(mask,pmn,xyi,xyobs,robs,lenη,1., alphabc = 1);
+        fi_η,s_η = DIVAnd.DIVAndrun(mask,pmn,xyi,xyobs,robs,lenη,1., alphabc = 1, alpha=alpha);
         η_iB = s_η.iB
     else
         η_iB = sparse(I,sum(mask),sum(mask))
     end
-    fi,s_u = DIVAnd.DIVAndrun(mask_u,pmn_u,xyi_u,xyobs,robs,len,1., alphabc = 1);
-    fi,s_v = DIVAnd.DIVAndrun(mask_v,pmn_v,xyi_v,xyobs,robs,len,1., alphabc = 1);
+    fi,s_u = DIVAnd.DIVAndrun(mask_u,pmn_u,xyi_u,xyobs,robs,len,1., alphabc = 1, alpha=alpha);
+    fi,s_v = DIVAnd.DIVAndrun(mask_v,pmn_v,xyi_v,xyobs,robs,len,1., alphabc = 1, alpha=alpha);
 
     #@show sum(abs.(s_u.iB))
     iB = blockdiag(ratio * η_iB,s_u.iB,s_v.iB)
+
+    #@show sum(abs.(s_u.iB * 3600))
+    #@show sum(abs.(s_v.iB * 3600))
+    #@show sum(abs.(s_η.iB * 3100))
+
+    #3706.502790806167, 2889.2516005961907
+    # test
+    #@show "test"
+    #iB = blockdiag(ratio * s_η.iB * (3706.502790806167 * 2889.251600596190) ,s_u.iB * 3600.,s_v.iB * 3600.)
+    #iB = blockdiag(ratio * s_η.iB * (28000) ,s_u.iB * 3600.,s_v.iB * 3600.)
 
     #@show sum(iB)
     #@show sum(abs.(iB))
@@ -319,19 +332,26 @@ function DIVAndrun_hfradar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;
         ti = xyi[3]
         t = ti[1,1,:]
 
+        # scaling is one expect for the part relative to the elevation
+        scaling = ones(sv.n)
+        scaling[1:s_η.n] .= ratio
+        #scaling[1:s_η.n] .= 100
+
         function iPfun(x,iPx)
             iPx[:] = iP*x + (1/eps2_Coriolis_constraint) *
                 misfit_intertial_oscillation_geo_adj(
-                    sv,config,t,x0,misfit_intertial_oscillation_geo(
+                    sv,config,t,x0,scaling .* misfit_intertial_oscillation_geo(
                         sv,config,t,x0,x))
         end
 
+        maxit = 50000
+        maxit = 100000
         fi,success,niter = DIVAnd.conjugategradient(
-            iPfun,Pxa,tol=1e-6,maxit = 50000,
+            iPfun,Pxa,tol=1e-6,maxit = maxit,
             #        progress = DIVAnd.cgprogress
         )
 
-        @show success
+        @show success,niter
     else
         fi = iP \ Pxa
     end
@@ -487,11 +507,10 @@ function cverr(
     eps2_boundary_constraint,
     eps2_div_constraint,
     eps2_Coriolis_constraint,
-    g,ratio; u = [], v = [], η = [], selection = :cv)
-
-
-    # time window
-    Δn = 1
+    g,ratio;
+    u = [], v = [], η = [], selection = :cv,
+    Δn = 1,     # time window
+)
 
     # DEBUG only 1:3
 
@@ -532,7 +551,8 @@ function cverr(
     res[:] .= NaN
 
     #@show fun(50)
-    #@show ncv
+    @show length(ncv)
+    @show ncv
     output = pmap(fun,ncv)
     #output = map(fun,ncv)
     #@show size(output),size(ncv)
