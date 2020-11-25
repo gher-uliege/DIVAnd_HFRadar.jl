@@ -1,6 +1,3 @@
-using JLD
-#using PyPlot
-
 function spobsoper_radvel(sv,modelgrid,Xobs,varindexu,varindexv,direction)
 
     #@show size(sv.mask[varindexu])
@@ -55,7 +52,7 @@ end
 
 """
 
-    DIVAnd_hfradar.DIVAndrun_hfradar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;...)
+    DIVAndrun_hfradar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;...)
 
 HF Radar current analysis with DIVAnd and velocity constraints. The input
 parameters are:
@@ -354,7 +351,7 @@ function DIVAndrun_hfradar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;
 end
 
 
-
+export DIVAndrun_hfradar
 
 function cv_rec(
     ncenter,Δn,
