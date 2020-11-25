@@ -21,16 +21,16 @@ for c in cases
         pp = ["eps2"]
         if c == "2D"
             ref = RMS
-        elseif c == "2D_boundary_constrain"
-            pp = ["eps2","eps2_boundary_constrain"]
-        elseif c == "2D_div_constrain"
-            pp = ["eps2","eps2_div_constrain"]
+        elseif c == "2D_boundary_constraint"
+            pp = ["eps2","eps2_boundary_constraint"]
+        elseif c == "2D_div_constraint"
+            pp = ["eps2","eps2_div_constraint"]
         elseif c == "3D"
             pp = ["eps2","lent"]
-        elseif c == "3D_Coriolis_constrain"
-            pp = ["eps2","eps2_Coriolis_constrain"]
+        elseif c == "3D_Coriolis_constraint"
+            pp = ["eps2","eps2_Coriolis_constraint"]
         elseif c == "3D_Coriolis_geo" || c == "3D_Coriolis_geo_gp"
-            pp = ["eps2","eps2_Coriolis_constrain","ratio"]
+            pp = ["eps2","eps2_Coriolis_constraint","ratio"]
         end 
         
         oplist = join(["$(p)=$(@sprintf("%.4g",param[p]))" for p in pp],", ")

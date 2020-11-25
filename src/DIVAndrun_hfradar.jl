@@ -78,9 +78,9 @@ the background estimate.
 
 ## Optional input parameters
 
-* `eps2_boundary_constrain` (default -1):
-* `eps2_div_constrain` (default -1):
-* `eps2_Coriolis_constrain` (default -1):
+* `eps2_boundary_constraint` (default -1):
+* `eps2_div_constraint` (default -1):
+* `eps2_Coriolis_constraint` (default -1):
 * `f` (default 0.001 s⁻¹): Coriolis parameter. For a latitude ``φ``, we have on Earth :
 
 ```math
@@ -161,9 +161,9 @@ r, u, v, direction and β consistent with the CODAR convention of the ruv files 
 
 """
 function DIVAndrun_hfradar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;
-                        eps2_boundary_constrain = -1,
-                        eps2_div_constrain = -1,
-                        eps2_Coriolis_constrain = -1,
+                        eps2_boundary_constraint = -1,
+                        eps2_div_constraint = -1,
+                        eps2_Coriolis_constraint = -1,
                         f = 0.001,
                         residual = zeros(size(robs)),
                         g = 0.,
@@ -238,7 +238,7 @@ function DIVAndrun_hfradar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;
 
     #@show sum(mask), sum.(pmn), lenη
 
-    if  (ndims(mask) == 3) && (eps2_Coriolis_constrain != -1) && (g != 0)
+    if  (ndims(mask) == 3) && (eps2_Coriolis_constraint != -1) && (g != 0)
         fi_η,s_η = DIVAnd.DIVAndrun(mask,pmn,xyi,xyobs,robs,lenη,1., alphabc = 1);
         η_iB = s_η.iB
     else
@@ -271,16 +271,16 @@ function DIVAndrun_hfradar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;
     Pxa = H' * (R \ yo)
     #@show sum(Pxa.^2)
 
-    if eps2_boundary_constrain != -1
+    if eps2_boundary_constraint != -1
         Hboundary = DIVAnd.sparse_pack(sv,(falses(size(mask)),boundary_u,boundary_v))
-        Rboundary = eps2_boundary_constrain * Diagonal(ones(size(Hboundary,1)))
+        Rboundary = eps2_boundary_constraint * Diagonal(ones(size(Hboundary,1)))
         yoboundary = zeros(size(Hboundary,1))
 
         iP += Hboundary' * (Rboundary \ Hboundary)
         Pxa +=  Hboundary' * (Rboundary \ yoboundary)
     end
 
-    if eps2_div_constrain != -1
+    if eps2_div_constraint != -1
         # divergence
         #   ∂hu/∂x + ∂hv/∂y  ≈ 0
         # cost function
@@ -307,7 +307,7 @@ function DIVAndrun_hfradar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;
         # in the computation of the divergence
         UP = blockdiag(spzeros(0,sum(mask)),copy(Pu'),copy(Pv'));
         Hdiv = [DUx*TUy*Iu   DVy*TVx*Iv] * UP;
-        Rdiv = eps2_div_constrain * Diagonal(ones(size(Hdiv,1)))
+        Rdiv = eps2_div_constraint * Diagonal(ones(size(Hdiv,1)))
 
         #@show size(Hdiv)
 
@@ -316,14 +316,14 @@ function DIVAndrun_hfradar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;
 
     #@show @__LINE__,@__FILE__
 
-    if eps2_Coriolis_constrain != -1
+    if eps2_Coriolis_constraint != -1
         #if false
         x0 = zeros(sv.n) # not used for a linear constrain
         ti = xyi[3]
         t = ti[1,1,:]
 
         function iPfun(x,iPx)
-            iPx[:] = iP*x + (1/eps2_Coriolis_constrain) *
+            iPx[:] = iP*x + (1/eps2_Coriolis_constraint) *
                 misfit_intertial_oscillation_geo_adj(
                     sv,config,t,x0,misfit_intertial_oscillation_geo(
                         sv,config,t,x0,x))
@@ -362,9 +362,9 @@ function cv_rec(
     lonr,latr,timerange,
     mask2d,h,
     len,lenη,eps2,
-    eps2_boundary_constrain,
-    eps2_div_constrain,
-    eps2_Coriolis_constrain,
+    eps2_boundary_constraint,
+    eps2_div_constraint,
+    eps2_Coriolis_constraint,
     g,
     ratio
 )
@@ -449,9 +449,9 @@ function cv_rec(
 
     uri_temp,vri_temp,ηri_temp = DIVAndrun_hfradar(
         mask,h3d,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;
-        eps2_boundary_constrain = eps2_boundary_constrain,
-        eps2_div_constrain = eps2_div_constrain,
-        eps2_Coriolis_constrain = eps2_Coriolis_constrain,
+        eps2_boundary_constraint = eps2_boundary_constraint,
+        eps2_div_constraint = eps2_div_constraint,
+        eps2_Coriolis_constraint = eps2_Coriolis_constraint,
         f = f,
         g = g,
         residual = residual,
@@ -475,9 +475,9 @@ end
         lonr,latr,timerange,
         mask2d,h,
         len,lenη,eps2,
-        eps2_boundary_constrain,
-        eps2_div_constrain,
-        eps2_Coriolis_constrain,
+        eps2_boundary_constraint,
+        eps2_div_constraint,
+        eps2_Coriolis_constraint,
         g,ratio; u = [], v = [], η = [], selection = :cv)
 
 Cross-validation error
@@ -487,9 +487,9 @@ function cverr(
     lonr,latr,timerange,
     mask2d,h,
     len,lenη,eps2,
-    eps2_boundary_constrain,
-    eps2_div_constrain,
-    eps2_Coriolis_constrain,
+    eps2_boundary_constraint,
+    eps2_div_constraint,
+    eps2_Coriolis_constraint,
     g,ratio; u = [], v = [], η = [], selection = :cv)
 
 
@@ -517,9 +517,9 @@ function cverr(
                           lonr,latr,timerange,
                           mask2d,h,
                           len,lenη,eps2,
-                          eps2_boundary_constrain,
-                          eps2_div_constrain,
-                          eps2_Coriolis_constrain,
+                          eps2_boundary_constraint,
+                          eps2_div_constraint,
+                          eps2_Coriolis_constraint,
                           g,
                           ratio
                           )
@@ -553,9 +553,9 @@ function cverr(
     forcv_and_sea = flagcv_all .& (.!isnan.(res))
     cv_err = sqrt(mean(res[forcv_and_sea].^2))
     status = (len...,lenη...,eps2,
-              eps2_boundary_constrain,
-              eps2_div_constrain,
-              eps2_Coriolis_constrain,
+              eps2_boundary_constraint,
+              eps2_div_constraint,
+              eps2_Coriolis_constraint,
               g,ratio,
               cv_err)
 

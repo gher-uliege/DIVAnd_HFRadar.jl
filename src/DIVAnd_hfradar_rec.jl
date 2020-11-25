@@ -39,9 +39,9 @@ for c in cases
     lenη = (0.,0.,param["lenetat"])
 
     eps2 = param["eps2"]
-    eps2_boundary_constrain = param["eps2_boundary_constrain"]
-    eps2_Coriolis_constrain = param["eps2_Coriolis_constrain"]
-    eps2_div_constrain = param["eps2_div_constrain"]
+    eps2_boundary_constraint = param["eps2_boundary_constraint"]
+    eps2_Coriolis_constraint = param["eps2_Coriolis_constraint"]
+    eps2_div_constraint = param["eps2_div_constraint"]
     g = param["g"]
     ratio = param["ratio"]
 
@@ -51,9 +51,9 @@ for c in cases
                    mask2d,htot,
                    len,lenη,
                    eps2,
-                   eps2_boundary_constrain,
-                   eps2_div_constrain,
-                   eps2_Coriolis_constrain,
+                   eps2_boundary_constraint,
+                   eps2_div_constraint,
+                   eps2_Coriolis_constraint,
                    g,
                    ratio;
                    selection=selection,u = uri, v = vri, η = ηri)

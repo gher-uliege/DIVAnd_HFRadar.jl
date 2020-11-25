@@ -83,23 +83,23 @@ md"Uncertainty of observations (`epsilon2`)"
 md"Uncertainty of the boundary constraint (`eps2_boundary_constraint`)"
 
 # ╔═╡ 2575c772-2e9c-11eb-3948-e3c991d471eb
-@bind eps2_boundary_constrain  Slider(LinRange(0.0001,100,100),default=100)
+@bind eps2_boundary_constraint  Slider(LinRange(0.0001,100,100),default=100)
 
 # ╔═╡ 6668d15c-2f00-11eb-1002-a711787e0257
 md"Uncertainty of the divergence constraint (`eps2_div_constraint`)"
 
 # ╔═╡ 6e9a6224-2e9d-11eb-17b3-af648104f09d
-@bind eps2_div_constrain  Slider(LinRange(0.0001,1000,100),default=1000)
+@bind eps2_div_constraint  Slider(LinRange(0.0001,1000,100),default=1000)
 
 # ╔═╡ fc99a50e-2efe-11eb-3833-0b146e1556ec
-len, epsilon2, eps2_boundary_constrain, eps2_div_constrain
+len, epsilon2, eps2_boundary_constraint, eps2_div_constraint
 
 # ╔═╡ 65d63b30-2e9a-11eb-1d21-6f02c2549c10
 begin
 	uri,vri = DIVAndrun_hfradar(
     mask,h,(pm,pn),(xi,yi),(xobs,yobs),robs,directionobs,len,epsilon2,
-    eps2_boundary_constrain = eps2_boundary_constrain,
-    eps2_div_constrain = eps2_div_constrain,
+    eps2_boundary_constraint = eps2_boundary_constraint,
+    eps2_div_constraint = eps2_div_constraint,
     )
 
 	clf()

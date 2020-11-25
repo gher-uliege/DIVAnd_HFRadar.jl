@@ -41,14 +41,14 @@ uri,vri = DIVAndrun_hfradar(
 
 uri,vri = DIVAndrun_hfradar(
     mask,h,(pm,pn),(xi,yi),(xobs,yobs),robs,directionobs,len,epsilon2,
-    eps2_boundary_constrain = 0.0001,
+    eps2_boundary_constraint = 0.0001,
 )
 
 
 uri,vri = DIVAndrun_hfradar(
     mask,h,(pm,pn),(xi,yi),(xobs,yobs),robs,directionobs,len,epsilon2,
-    eps2_boundary_constrain = 0.001,
-    eps2_div_constrain = 0.001,
+    eps2_boundary_constraint = 0.001,
+    eps2_div_constraint = 0.001,
 )
 
 
@@ -84,9 +84,9 @@ epsilon2 = 0.1
 
 uri,vri = DIVAndrun_hfradar(
     mask,h,(pm,pn,po),(xi,yi,ti),(xobs,yobs,tobs),robs,directionobs,len,epsilon2;
-    eps2_boundary_constrain = -1,
-    eps2_div_constrain = -1,
-    eps2_Coriolis_constrain = 1e-1,
+    eps2_boundary_constraint = -1,
+    eps2_div_constraint = -1,
+    eps2_Coriolis_constraint = 1e-1,
     f = 1e-4,
 )
 
