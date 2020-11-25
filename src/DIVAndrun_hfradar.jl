@@ -55,24 +55,45 @@ end
 
 """
 
-    DIVAnd_hfradar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;...)
+    DIVAnd_hfradar.DIVAndrun_hfradar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;...)
 
-HF Radar current analysis with DIVAnd and velocity contraints.
+HF Radar current analysis with DIVAnd and velocity contraints. The input
+parameters are:
 
-mask: true for sea points (false for land points) (3D-array)
-h: depth in meters (3D-array)
-pmn: inverse of the local resolution (tuple of three 3D-arrays)
-xyi: coordinates of the analysis grid (tuple of three 3D-arrays)
-xyobs: coordinates of the observations (tuple of three vectors)
-robs: radial velocity (vector)
-directionobs: angle α of the measured direction in degrees (vector) such that
+* `mask`: true for sea points (false for land points) (3D-array)
+* `h`: depth in meters (3D-array)
+* `pmn`: inverse of the local resolution (tuple of three 3D-arrays)
+* `xyi`: coordinates of the analysis grid (tuple of three 3D-arrays)
+* `xyobs`: coordinates of the observations (tuple of three vectors)
+* `robs`: radial velocity (vector)
+* `directionobs`: angle α of the measured direction in degrees (vector) such that (see below)
 
 ```math
-u\\_{obs} * sin(α) + v\\_{obs} * cos(α) ≈ robs
+u_{obs}  \\sin(α) + v_{obs}  \\cos(α) ≈ r_{obs}
 ```
 
-len,epsilon2
-f in  s⁻¹
+* `len`: the correlation length (a tuple of scalars)
+* `epsilon2`: error variance of the observation relative to the error variace of
+the background estimate.
+
+## Optional input parameters
+
+* `eps2_boundary_constrain` (default -1):
+* `eps2_div_constrain` (default -1):
+* `eps2_Coriolis_constrain` (default -1):
+* `f` (default 0.001 s⁻¹): Coriolis parameter. For a latitude ``φ``, we have on Earth :
+
+```math
+\\begin{aligned}
+    Ω =& 7.2921 \\; 10^{-5} rad/s \\\\
+    f =& 2 Ω \\sin(φ)
+\\end{aligned}
+```
+
+* `g` (default 0. m/s²): acceleration due to gravity. If g is zero, then the surface pressure is not considered; otherwise g should be set to 9.81.
+* `ratio` (default 100): normalization factor
+* `lenη`  (default 0, 0, 24 * 60 * 60. * 10): correlation length in space and time for the surface elevation
+* `residual`: an array of the same size as robs with the residual (output)
 
 
 ## Convention for the direction
@@ -81,39 +102,63 @@ bearing β: angle at radar station (*) between North a measuring point (+) count
 direction α: angle at measuring point between North and vector pointing to the radar station counted clockwise
 
 
+                    ↑ /
+                    |/
+             ↑      +--→ current vector (u,v)
+      North  |     / measurent point
+             |    /
+             |   /
+             |  /
+             |β/
+             |/
+             *
+       radar station
 
-                ↑ /
-                |/
-         ↑      +--→ current vector (u,v)
-  North  |     / measurent point
-         |    /
-         |   /
-         |  /
-         |β/
-         |/
-         *
-   radar station
+Sufficiently far from the poles, we have:
 
-direction α = bearing β + 180
+```math
+α ≈ β + 180
+```
 
-u zonal component, v meridional component
-u = r * sin(α)
-v = r * cos(α)
+The ``u`` zonal and ``v`` meridional velocity component are related to the radial current ``r`` and direction ``β`` by:
 
-r = u * sin(α) + v * cos(α)
+```math
+\\begin{aligned}
+u =& r \\sin(α) \\\\
+v =& r \\cos(α) \\\\
+\\end{aligned}
+```
+
+```math
+\\begin{aligned}
+r =& u  \\sin(α) + v  \\cos(α) \\\\
+\\tan(α) &= {u \\over v}
+\\end{aligned}
+```
 
 
-u = -r * sin(β)
-v = -r * cos(β)
-
-For HF radar, r is positive if velocity is pointing *towards* the radar site.
+For HF radar data, r is positive if the velocity is pointing *towards* the radar site.
 r, u, v, direction and β consistent with the CODAR convention of the ruv files [1,2]:
 
 > A positive radial velocity is moving towards the SeaSonde, while a negative radial velocity is moving away from the SeaSonde.
 
 
-[1] https://web.archive.org/web/20181009090405/https://cordc.ucsd.edu/projects/mapping/documents/radFileFormats_20050408.pdf
-[2] https://web.archive.org/web/20200125080518/http://support.codar.com/Technicians_Information_Page_for_SeaSondes/Docs/GuidesToFileFormats/File_LonLatUV_RDL_TOT_ELP.pdf
+!!! note
+    For the Coriolis force constrain and the surface pressure gradient
+    constrain, one need to include a time dimension.
+
+
+!!! info
+    If you see the error
+    `ERROR: PosDefException: matrix is not positive definite; Cholesky factorization failed.` you might need to check the values of your input parameters, in particular correlation, scale factors `pmn` and `epsilon2`.
+
+
+[1] [File Formats Used for CODAR Radial Data](https://web.archive.org/web/20181009090405/https://cordc.ucsd.edu/projects/mapping/documents/radFileFormats_20050408.pdf)
+
+[2] [Technicians Information Page for SeaSondes](https://web.archive.org/web/20200125080518/http://support.codar.com/Technicians_Information_Page_for_SeaSondes/Docs/GuidesToFileFormats/File_LonLatUV_RDL_TOT_ELP.pdf)
+
+
+
 """
 function DIVAndrun_hfradar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;
                         eps2_boundary_constrain = -1,
@@ -121,9 +166,9 @@ function DIVAndrun_hfradar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;
                         eps2_Coriolis_constrain = -1,
                         f = 0.001,
                         residual = zeros(size(robs)),
-                        g = 0., # no pressure (testing)
+                        g = 0.,
                         ratio = 100,
-                        lenη = (000.0, 000.0, 24 * 60 * 60. * 10)
+                        lenη = (000.0, 000.0, 24 * 60 * 60. * 10),
                         )
 
 
@@ -193,12 +238,17 @@ function DIVAndrun_hfradar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;
 
     #@show sum(mask), sum.(pmn), lenη
 
-    @time fi_η,s_η = DIVAnd.DIVAndrun(mask,pmn,xyi,xyobs,robs,lenη,1., alphabc = 1);
-    @time fi,s_u = DIVAnd.DIVAndrun(mask_u,pmn_u,xyi_u,xyobs,robs,len,1., alphabc = 1);
-    @time fi,s_v = DIVAnd.DIVAndrun(mask_v,pmn_v,xyi_v,xyobs,robs,len,1., alphabc = 1);
+    if  (ndims(mask) == 3) && (eps2_Coriolis_constrain != -1) && (g != 0)
+        fi_η,s_η = DIVAnd.DIVAndrun(mask,pmn,xyi,xyobs,robs,lenη,1., alphabc = 1);
+        η_iB = s_η.iB
+    else
+        η_iB = sparse(I,sum(mask),sum(mask))
+    end
+    fi,s_u = DIVAnd.DIVAndrun(mask_u,pmn_u,xyi_u,xyobs,robs,len,1., alphabc = 1);
+    fi,s_v = DIVAnd.DIVAndrun(mask_v,pmn_v,xyi_v,xyobs,robs,len,1., alphabc = 1);
 
     #@show sum(abs.(s_u.iB))
-    iB = blockdiag(ratio * s_η.iB,s_u.iB,s_v.iB)
+    iB = blockdiag(ratio * η_iB,s_u.iB,s_v.iB)
 
     #@show sum(iB)
     #@show sum(abs.(iB))
@@ -418,6 +468,20 @@ function cv_rec(
     return uri_temp[:,:,(end+1) ÷ 2],vri_temp[:,:,(end+1) ÷ 2],ηri_temp[:,:,(end+1) ÷ 2],residual4[:,:,(end+1) ÷ 2,:]
 end
 
+
+"""
+    DIVAnd_hfradar.cverr(
+        xobs_all,yobs_all,robs_all,directionobs_all,flagcv_all,sitenames,
+        lonr,latr,timerange,
+        mask2d,h,
+        len,lenη,eps2,
+        eps2_boundary_constrain,
+        eps2_div_constrain,
+        eps2_Coriolis_constrain,
+        g,ratio; u = [], v = [], η = [], selection = :cv)
+
+Cross-validation error
+"""
 function cverr(
     xobs_all,yobs_all,robs_all,directionobs_all,flagcv_all,sitenames,
     lonr,latr,timerange,
