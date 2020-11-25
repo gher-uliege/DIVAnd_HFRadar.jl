@@ -15,16 +15,18 @@ end
 
 # ╔═╡ 1c056adc-2e9a-11eb-3d81-0d29e98a3551
 begin
-	
 	# We set up a new environment for this notebook
 	import Pkg
 	#Pkg.activate(mktempdir())
-	
-	
+
 	# This is how you add a package:
 	#Pkg.add("PlutoUI")
+	#Pkg.add("DIVAnd")
+	#Pkg.add("PyPlot")
+    #Pkg.add(url="https://github.com/gher-ulg/DIVAnd_hfradar.jl", rev="master")
+
 	using PlutoUI
-    using DIVAnd_hfradar: DIVAndrun_hfradar	
+    using DIVAnd_hfradar: DIVAndrun_hfradar
 	using DIVAnd
 	using PyPlot
 end
@@ -32,37 +34,35 @@ end
 
 # ╔═╡ 3e8cc514-2e9a-11eb-35ad-8f110251cb48
 begin
-# size of the grid
-sz = (10,11);
-# depth (meters)
-h = 50 * ones(sz);
+    # size of the grid
+    sz = (10,11);
+    # depth (meters)
+    h = 50 * ones(sz);
 	# land-sea mask
-# true is sea; false is land
-mask = trues(sz);
+    # true is sea; false is land
+    mask = trues(sz);
 	mask[end,:] .= false;
-	
+
 	# 2D grid
-xi,yi = DIVAnd.ndgrid(LinRange(-1,1,sz[1]),LinRange(-1,1,sz[2]))
+    xi,yi = DIVAnd.ndgrid(LinRange(-1,1,sz[1]),LinRange(-1,1,sz[2]))
 
-# scale factor; inverse of the resolution
-pm = ones(sz) / (xi[2,1]-xi[1,1]);
-pn = ones(sz) / (yi[1,2]-yi[1,1]);
+    # scale factor; inverse of the resolution
+    pm = ones(sz) / (xi[2,1]-xi[1,1]);
+    pn = ones(sz) / (yi[1,2]-yi[1,1]);
 
-# radial observations
-robs = [1.]
+    # radial observations
+    robs = [1.]
 
-# direction of the observation (from North counted clockwise)
-directionobs = [90.]
+    # direction of the observation (from North counted clockwise)
+    directionobs = [90.]
 
-# position of the observation
-xobs = [0.]
-yobs = [0.]
-
-
+    # position of the observation
+    xobs = [0.]
+    yobs = [0.]
 end;
 
 # ╔═╡ f096b782-2eff-11eb-13a0-2981bb02584f
-md"# Illustration of DIVAnd with a single observation" 
+md"### Illustration of DIVAnd with a single observation"
 
 # ╔═╡ 43b7c380-2eff-11eb-35dc-9f0a75e6341c
 md"Correlation length"
@@ -75,9 +75,6 @@ md"Uncertainty of observations (`epsilon2`)"
 
 # ╔═╡ 4482ce12-2e9c-11eb-028d-2100248f0f9a
 @bind epsilon2  Slider(LinRange(0.001,0.1,100),default=0.01)
-
-# ╔═╡ a2d25d48-2f02-11eb-170c-c74e342399b6
-
 
 # ╔═╡ 41fd104e-2f00-11eb-2ed7-cd6e393e07f6
 md"Uncertainty of the boundary constraint (`eps2_boundary_constraint`)"
@@ -97,9 +94,9 @@ len, epsilon2, eps2_boundary_constraint, eps2_div_constraint
 # ╔═╡ 65d63b30-2e9a-11eb-1d21-6f02c2549c10
 begin
 	uri,vri = DIVAndrun_hfradar(
-    mask,h,(pm,pn),(xi,yi),(xobs,yobs),robs,directionobs,len,epsilon2,
-    eps2_boundary_constraint = eps2_boundary_constraint,
-    eps2_div_constraint = eps2_div_constraint,
+        mask,h,(pm,pn),(xi,yi),(xobs,yobs),robs,directionobs,len,epsilon2,
+        eps2_boundary_constraint = eps2_boundary_constraint,
+        eps2_div_constraint = eps2_div_constraint,
     )
 
 	clf()
@@ -107,9 +104,6 @@ begin
     α = directionobs*pi/180
     quiver(xobs,yobs,robs .* sin.(α), robs .* cos.(α),color = "r",scale = 10)
     contourf(xi,yi,mask,levels = [0,.5],cmap = "gray")
-
-    title("Data constraint")
-    savefig("currents1.png"); 
 	gcf()
 end
 
@@ -124,7 +118,6 @@ end
 # ╟─b39c60e8-2e9b-11eb-3c60-7fe7082d59e0
 # ╟─2c3feeac-2f00-11eb-24bb-2b7015c0551e
 # ╟─4482ce12-2e9c-11eb-028d-2100248f0f9a
-# ╠═a2d25d48-2f02-11eb-170c-c74e342399b6
 # ╟─41fd104e-2f00-11eb-2ed7-cd6e393e07f6
 # ╟─2575c772-2e9c-11eb-3948-e3c991d471eb
 # ╟─6668d15c-2f00-11eb-1002-a711787e0257
