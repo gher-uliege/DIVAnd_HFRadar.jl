@@ -41,7 +41,8 @@ begin
 	# land-sea mask
     # true is sea; false is land
     mask = trues(sz);
-	mask[end,:] .= false;
+	mask[[1, end],:] .= false;
+	mask[:,[1, end]] .= false;
 
 	# 2D grid
     xi,yi = DIVAnd.ndgrid(LinRange(-1,1,sz[1]),LinRange(-1,1,sz[2]))
@@ -54,7 +55,7 @@ begin
     robs = [1.]
 
     # direction of the observation (from North counted clockwise)
-    directionobs = [90.]
+    directionobs = [45.]
 
     # position of the observation
     xobs = [0.]
