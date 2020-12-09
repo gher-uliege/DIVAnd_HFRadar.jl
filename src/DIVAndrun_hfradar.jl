@@ -332,7 +332,7 @@ function DIVAndrun_hfradar(
 
         # scaling is one expect for the part relative to the elevation
         scaling = ones(sv.n)
-        scaling[1:s_η.n] .= ratio
+        scaling[1:sum(mask)] .= ratio
 
         function iPfun(x,iPx)
             iPx[:] = iP*x + (1/eps2_Coriolis_constraint) *
