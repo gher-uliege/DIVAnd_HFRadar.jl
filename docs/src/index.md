@@ -5,6 +5,57 @@ The package `DIVAnd_hfradar` allow to interpolate surface current data on a regu
 The primary use-case is for radial current measurements for high-frequency radars. But it can also be applied to any other
 current data (like ADCPs or drifters).
 
+## Formulation
+
+The package `DIVAnd_hfradar` aims to minimize the following cost function
+
+```math
+J_{\mathrm {vel}}(\vec u) = ||u||^2 + ||v||^2 +
+\sum_{i=1}^N \frac{(\vec u_{i} \cdot \vec p_{i} - {u_r}_i)^2}{\epsilon^2_{i}},
+```
+
+where ``\vec u = \left(u,v\right)`` is the horizontal velocity vector, ``\vec p_i`` is the normalized vector pointing toward the corresponding HF radar
+site of the ``i``-th radial observation ``{u_r}_i``, ``N`` is the number of radial observations and ``\epsilon^2_{i}`` represents the variance of the measurements noise (normalized by the background error variance). The operator ``||u||^2`` is given by (and likewise for the component ``v``):
+
+```math
+||u||^2=\int_{\Omega}( \alpha_{2} \boldsymbol \nabla\boldsymbol \nabla u :
+\boldsymbol \nabla\boldsymbol \nabla u +\alpha_{1} \boldsymbol \nabla u \cdot \boldsymbol \nabla u +
+\alpha_{0}  u^{2}) \; d \Omega
+```
+
+### Boundary condition
+
+```math
+\vec u \cdot \vec n = 0,
+```
+
+where ``\vec n`` is the vector normal to the coastline ``\partial \Omega``. At the open ocean boundaries, this constraint is not activated, allowing therefore a flow through the domain.
+
+### Horizontal divergence
+
+If we integrate the continuity equation over the surface layer and ignore the vertical velocity, we obtain an additional dynamical constraint on the horizontal velocity:
+
+```math
+\boldsymbol \nabla \cdot (h \vec u) \simeq 0.
+```
+
+where ``h`` is the average depth of the surface mixed layer or the total water depth where total water depth is shallower and the average depth of the surface layer. 
+As before, this constraint is included in the cost function as a weak constraint with the following form:
+
+
+### Simplified momentum balance
+
+In order to take the momentum balance into account, the time dimension must include the time dimension and the surface elevation ``\eta`` is also a parameter
+of our cost function:
+
+```math
+\begin{aligned}
+    \frac{\partial u}{\partial t} =& f v  - g   \frac{\partial \eta}{\partial x} \\
+    \frac{\partial v}{\partial t} =& - f u - g   \frac{\partial \eta}{\partial y}
+\end{aligned}
+```
+
+where ``g`` the acceleration due to gravity.
 
 ## Tutorial
 
