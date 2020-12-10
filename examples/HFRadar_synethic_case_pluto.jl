@@ -15,21 +15,25 @@ end
 
 # ╔═╡ 1c056adc-2e9a-11eb-3d81-0d29e98a3551
 begin
-	# We set up a new environment for this notebook
-	import Pkg
-	Pkg.activate(mktempdir())
-	Pkg.add("Conda")
-    import Conda
-    Conda.add("matplotlib")
-	Pkg.add("PlutoUI")
-	Pkg.add("DIVAnd")
-	Pkg.add("PyPlot")
+    # We set up a new environment for this notebook
+    import Pkg
+    Pkg.activate(mktempdir())
+    Pkg.add("PyCall")
+    using PyCall
+    try
+        pyimport("matplotlib")
+    catch
+        run(`pip install matplotlib`)
+    end
+    Pkg.add("PlutoUI")
+    Pkg.add("DIVAnd")
+    Pkg.add("PyPlot")
     Pkg.add(url="https://github.com/gher-ulg/DIVAnd_HFRadar.jl", rev="master")
 
-	using PlutoUI
+    using PlutoUI
     using DIVAnd_HFRadar: DIVAndrun_HFRadar
-	using DIVAnd
-	using PyPlot
+    using DIVAnd
+    using PyPlot
 end
 
 
@@ -39,13 +43,13 @@ begin
     sz = (10,11);
     # depth (meters)
     h = 50 * ones(sz);
-	# land-sea mask
+    # land-sea mask
     # true is sea; false is land
     mask = trues(sz);
-	mask[[1, end],:] .= false;
-	mask[:,[1, end]] .= false;
+    mask[[1, end],:] .= false;
+    mask[:,[1, end]] .= false;
 
-	# 2D grid
+    # 2D grid
     xi,yi = DIVAnd.ndgrid(LinRange(-1,1,sz[1]),LinRange(-1,1,sz[2]))
 
     # scale factor; inverse of the resolution
@@ -95,18 +99,18 @@ len, epsilon2, eps2_boundary_constraint, eps2_div_constraint
 
 # ╔═╡ 65d63b30-2e9a-11eb-1d21-6f02c2549c10
 begin
-	uri,vri = DIVAndrun_HFRadar(
+    uri,vri = DIVAndrun_HFRadar(
         mask,h,(pm,pn),(xi,yi),(xobs,yobs),robs,directionobs,len,epsilon2,
         eps2_boundary_constraint = eps2_boundary_constraint,
         eps2_div_constraint = eps2_div_constraint,
     )
 
-	figure(figsize = (6,6))
+    figure(figsize = (6,6))
     quiver(xi,yi,uri,vri, scale = 10)
     α = directionobs*pi/180
     quiver(xobs,yobs,robs .* sin.(α), robs .* cos.(α),color = "r",scale = 10)
     contourf(xi,yi,mask,levels = [0,.5],cmap = "gray")
-	gcf()
+    gcf()
 end
 
 # ╔═╡ 1aadac36-3ac9-11eb-04fe-7731a58578b8
