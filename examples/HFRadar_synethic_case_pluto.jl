@@ -17,16 +17,17 @@ end
 begin
 	# We set up a new environment for this notebook
 	import Pkg
-	#Pkg.activate(mktempdir())
-
-	# This is how you add a package:
+	Pkg.activate(mktempdir())
+	Pkg.add("Conda")
+    import Conda
+    Conda.add("matplotlib")
 	Pkg.add("PlutoUI")
 	Pkg.add("DIVAnd")
 	Pkg.add("PyPlot")
-        Pkg.add(url="https://github.com/gher-ulg/DIVAnd_HFRadar.jl", rev="master")
+    Pkg.add(url="https://github.com/gher-ulg/DIVAnd_HFRadar.jl", rev="master")
 
 	using PlutoUI
-        using DIVAnd_HFRadar: DIVAndrun_HFRadar
+    using DIVAnd_HFRadar: DIVAndrun_HFRadar
 	using DIVAnd
 	using PyPlot
 end
@@ -81,13 +82,13 @@ md"Uncertainty of observations (`epsilon2`)"
 md"Uncertainty of the boundary constraint (`eps2_boundary_constraint`)"
 
 # ╔═╡ 2575c772-2e9c-11eb-3948-e3c991d471eb
-@bind eps2_boundary_constraint  Slider(LinRange(0.0001,100,100),default=100)
+@bind eps2_boundary_constraint  Slider(LinRange(0.0001,100,100),default=0.0001)
 
 # ╔═╡ 6668d15c-2f00-11eb-1002-a711787e0257
 md"Uncertainty of the divergence constraint (`eps2_div_constraint`)"
 
 # ╔═╡ 6e9a6224-2e9d-11eb-17b3-af648104f09d
-@bind eps2_div_constraint  Slider(LinRange(0.0001,1000,100),default=1000)
+@bind eps2_div_constraint  Slider(LinRange(0.0001,1000,100),default=0.0001)
 
 # ╔═╡ fc99a50e-2efe-11eb-3833-0b146e1556ec
 len, epsilon2, eps2_boundary_constraint, eps2_div_constraint
@@ -100,7 +101,7 @@ begin
         eps2_div_constraint = eps2_div_constraint,
     )
 
-	clf()
+	figure(figsize = (6,6))
     quiver(xi,yi,uri,vri, scale = 10)
     α = directionobs*pi/180
     quiver(xobs,yobs,robs .* sin.(α), robs .* cos.(α),color = "r",scale = 10)
@@ -108,8 +109,8 @@ begin
 	gcf()
 end
 
-# ╔═╡ a329d21e-2e9a-11eb-1235-ad3d9fdcdc55
-
+# ╔═╡ 1aadac36-3ac9-11eb-04fe-7731a58578b8
+md"In the extrem case, where only one observation (red arrow) is available DIVAnd, the dynamical contrains produce two conter-rotating gyres for a closed domain. Have a look to the [documentation](https://gher-ulg.github.io/DIVAnd_HFRadar.jl/dev/) for more information."
 
 # ╔═╡ Cell order:
 # ╟─1c056adc-2e9a-11eb-3d81-0d29e98a3551
@@ -122,7 +123,7 @@ end
 # ╟─41fd104e-2f00-11eb-2ed7-cd6e393e07f6
 # ╟─2575c772-2e9c-11eb-3948-e3c991d471eb
 # ╟─6668d15c-2f00-11eb-1002-a711787e0257
-# ╟─6e9a6224-2e9d-11eb-17b3-af648104f09d
+# ╠═6e9a6224-2e9d-11eb-17b3-af648104f09d
 # ╠═fc99a50e-2efe-11eb-3833-0b146e1556ec
 # ╟─65d63b30-2e9a-11eb-1d21-6f02c2549c10
-# ╠═a329d21e-2e9a-11eb-1235-ad3d9fdcdc55
+# ╟─1aadac36-3ac9-11eb-04fe-7731a58578b8
