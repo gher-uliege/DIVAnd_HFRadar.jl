@@ -1,4 +1,4 @@
-using DIVAnd_hfradar
+using DIVAnd_HFRadar
 using DIVAnd
 using Test
 using LinearAlgebra
@@ -22,8 +22,8 @@ x0 = zeros(sv.n) # not used
 t = 1:nmax;
 f = 0.1;
 
-@test δx1 ⋅ DIVAnd_hfradar.misfit_intertial_oscillation(sv,f,t,x0,δx2) ≈
-    DIVAnd_hfradar.misfit_intertial_oscillation_adj(sv,f,t,x0,δx1) ⋅ δx2
+@test δx1 ⋅ DIVAnd_HFRadar.misfit_intertial_oscillation(sv,f,t,x0,δx2) ≈
+    DIVAnd_HFRadar.misfit_intertial_oscillation_adj(sv,f,t,x0,δx1) ⋅ δx2
 
 
 
@@ -38,8 +38,8 @@ t = 1:nmax;
 f = 0.1;
 g = 9.81;
 
-grid = DIVAnd_hfradar.CGrid(mask,h,(pm,pn))
-config = DIVAnd_hfradar.Config(grid,f,g)
+grid = DIVAnd_HFRadar.CGrid(mask,h,(pm,pn))
+config = DIVAnd_HFRadar.Config(grid,f,g)
 
 #x1 = pack(sv,(randn((m-1,n)),randn((m,n-1))))[:,1]
 #x2 = pack(sv,(randn((m-1,n)),randn((m,n-1))))[:,1]
@@ -52,7 +52,7 @@ x0 = zeros(sv2.n) # not used
 #x2 = randn(2)
 
 
-@test δx1 ⋅ DIVAnd_hfradar.misfit_intertial_oscillation_geo(sv2,config,t,x0,δx2) ≈
-    DIVAnd_hfradar.misfit_intertial_oscillation_geo_adj(sv2,config,t,x0,δx1) ⋅ δx2
+@test δx1 ⋅ DIVAnd_HFRadar.misfit_intertial_oscillation_geo(sv2,config,t,x0,δx2) ≈
+    DIVAnd_HFRadar.misfit_intertial_oscillation_geo_adj(sv2,config,t,x0,δx1) ⋅ δx2
 
 #end

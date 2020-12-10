@@ -1,4 +1,4 @@
-using DIVAnd_hfradar: DIVAndrun_hfradar
+using DIVAnd_HFRadar: DIVAndrun_HFRadar
 using DIVAnd
 
 # size of the grid
@@ -35,17 +35,17 @@ len = (0.6,0.6)
 # data constraint
 epsilon2 = 0.001
 
-uri,vri = DIVAndrun_hfradar(
+uri,vri = DIVAndrun_HFRadar(
     mask,h,(pm,pn),(xi,yi),(xobs,yobs),robs,directionobs,len,epsilon2)
 
 
-uri,vri = DIVAndrun_hfradar(
+uri,vri = DIVAndrun_HFRadar(
     mask,h,(pm,pn),(xi,yi),(xobs,yobs),robs,directionobs,len,epsilon2,
     eps2_boundary_constraint = 0.0001,
 )
 
 
-uri,vri = DIVAndrun_hfradar(
+uri,vri = DIVAndrun_HFRadar(
     mask,h,(pm,pn),(xi,yi),(xobs,yobs),robs,directionobs,len,epsilon2,
     eps2_boundary_constraint = 0.001,
     eps2_div_constraint = 0.001,
@@ -82,7 +82,7 @@ tobs = [0.]
 len = (0.6,0.6,0.0)
 epsilon2 = 0.1
 
-uri,vri = DIVAndrun_hfradar(
+uri,vri = DIVAndrun_HFRadar(
     mask,h,(pm,pn,po),(xi,yi,ti),(xobs,yobs,tobs),robs,directionobs,len,epsilon2;
     eps2_boundary_constraint = -1,
     eps2_div_constraint = -1,

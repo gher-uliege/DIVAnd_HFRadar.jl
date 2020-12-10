@@ -1,13 +1,13 @@
 # DIVAnd HF Radar
 
 
-The package `DIVAnd_hfradar` allow to interpolate surface current data on a regular grid.
+The package `DIVAnd_HFRadar` allow to interpolate surface current data on a regular grid.
 The primary use-case is for radial current measurements for high-frequency radars. But it can also be applied to any other
 current data (like ADCPs or drifters).
 
 ## Formulation
 
-The package `DIVAnd_hfradar` aims to minimize the following cost function
+The package `DIVAnd_HFRadar` aims to minimize the following cost function
 
 ```math
 J_{\mathrm {vel}}(\vec u) = ||u||^2 + ||v||^2 +
@@ -59,13 +59,13 @@ where ``g`` the acceleration due to gravity.
 
 ## Tutorial
 
-To run these examples you need install Julia and the packages `DIVAnd`, `DIVAnd_hfradar` and `PyPlot` which can be installed by
+To run these examples you need install Julia and the packages `DIVAnd`, `DIVAnd_HFRadar` and `PyPlot` which can be installed by
 these julia commands:
 
 ```julia
 using Pkg
 Pkg.add("DIVAnd")
-Pkg.add(url="https://github.com/gher-ulg/DIVAnd_hfradar.jl", rev="master")
+Pkg.add(url="https://github.com/gher-ulg/DIVAnd_HFRadar.jl", rev="master")
 Pkg.add("PyPlot")
 ```
 
@@ -81,7 +81,7 @@ In this example, we are setting up an idealized domain from spanning -1 to 1 wit
 The gray area on the right is a coastal wall.
 
 ```@example 1
-using DIVAnd_hfradar: DIVAndrun_hfradar
+using DIVAnd_HFRadar: DIVAndrun_HFRadar
 using DIVAnd
 using PyPlot
 
@@ -128,7 +128,7 @@ function plotres(uri,vri)
     contourf(xi,yi,mask,levels = [0,.5],cmap = "gray")
 end
 
-uri,vri = DIVAndrun_hfradar(
+uri,vri = DIVAndrun_HFRadar(
     mask,h,(pm,pn),(xi,yi),(xobs,yobs),robs,directionobs,len,epsilon2)
 plotres(uri,vri)
 title("Data constraint")
@@ -141,7 +141,7 @@ savefig("currents1.png"); clf(); nothing # hide
 ### Boundary condition
 
 ```@example 1
-uri,vri = DIVAndrun_hfradar(
+uri,vri = DIVAndrun_HFRadar(
     mask,h,(pm,pn),(xi,yi),(xobs,yobs),robs,directionobs,len,epsilon2,
     eps2_boundary_constraint = 0.0001,
 )
@@ -155,7 +155,7 @@ savefig("currents2.png"); clf(); nothing # hide
 ### Boundary condition and divergence constraint
 
 ```@example 1
-uri,vri = DIVAndrun_hfradar(
+uri,vri = DIVAndrun_HFRadar(
     mask,h,(pm,pn),(xi,yi),(xobs,yobs),robs,directionobs,len,epsilon2,
     eps2_boundary_constraint = 0.001,
     eps2_div_constraint = 0.001,
@@ -199,7 +199,7 @@ tobs = [0.]
 len = (0.6,0.6,0.0)
 epsilon2 = 0.1
 
-uri,vri = DIVAndrun_hfradar(
+uri,vri = DIVAndrun_HFRadar(
     mask,h,(pm,pn,po),(xi,yi,ti),(xobs,yobs,tobs),robs,directionobs,len,epsilon2;
     eps2_boundary_constraint = -1,
     eps2_div_constraint = -1,
@@ -228,7 +228,7 @@ savefig("currents_coriolis.png"); nothing # hide
 ## Reference
 
 ```@autodocs
-Modules = [DIVAnd_hfradar]
+Modules = [DIVAnd_HFRadar]
 Order   = [:function, :type]
 ```
 

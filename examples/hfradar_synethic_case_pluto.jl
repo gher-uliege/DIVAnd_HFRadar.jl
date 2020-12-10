@@ -23,10 +23,10 @@ begin
 	Pkg.add("PlutoUI")
 	Pkg.add("DIVAnd")
 	Pkg.add("PyPlot")
-        Pkg.add(url="https://github.com/gher-ulg/DIVAnd_hfradar.jl", rev="master")
+        Pkg.add(url="https://github.com/gher-ulg/DIVAnd_HFRadar.jl", rev="master")
 
 	using PlutoUI
-        using DIVAnd_hfradar: DIVAndrun_hfradar
+        using DIVAnd_HFRadar: DIVAndrun_HFRadar
 	using DIVAnd
 	using PyPlot
 end
@@ -94,7 +94,7 @@ len, epsilon2, eps2_boundary_constraint, eps2_div_constraint
 
 # ╔═╡ 65d63b30-2e9a-11eb-1d21-6f02c2549c10
 begin
-	uri,vri = DIVAndrun_hfradar(
+	uri,vri = DIVAndrun_HFRadar(
         mask,h,(pm,pn),(xi,yi),(xobs,yobs),robs,directionobs,len,epsilon2,
         eps2_boundary_constraint = eps2_boundary_constraint,
         eps2_div_constraint = eps2_div_constraint,

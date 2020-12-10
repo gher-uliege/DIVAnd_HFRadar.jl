@@ -1,5 +1,5 @@
 using Test
-using DIVAnd_hfradar
+using DIVAnd_HFRadar
 
 @testset "adjoint" begin
     include("test_adjoint.jl")

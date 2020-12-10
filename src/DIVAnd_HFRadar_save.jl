@@ -1,6 +1,6 @@
 using NCDatasets
 
-function DIVAnd_hfradar_save(fname,lonr,latr,timerange,uri,vri,ηri)
+function DIVAnd_HFRadar_save(fname,lonr,latr,timerange,uri,vri,ηri)
 
     function MArray(data)
         tmp = Array{Union{eltype(data),Missing}}(data)
@@ -37,4 +37,4 @@ function DIVAnd_hfradar_save(fname,lonr,latr,timerange,uri,vri,ηri)
     return nothing
 end
 
-export DIVAnd_hfradar_save
+export DIVAnd_HFRadar_save

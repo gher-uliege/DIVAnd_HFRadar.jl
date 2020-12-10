@@ -1,6 +1,6 @@
 # velocity constrains
 
-module DIVAnd_hfradar
+module DIVAnd_HFRadar
 
 import DIVAnd
 using Missings
@@ -25,10 +25,10 @@ include("stagger_v2r.jl")
 include("inertial_oscillations.jl")
 include("inertial_oscillations_geo.jl")
 
-include("DIVAndrun_hfradar.jl")
+include("DIVAndrun_HFRadar.jl")
 
-include("DIVAnd_hfradar_save.jl")
+include("DIVAnd_HFRadar_save.jl")
 
-include("DIVAnd_hfradar_load_optim.jl")
+include("DIVAnd_HFRadar_load_optim.jl")
 
 end

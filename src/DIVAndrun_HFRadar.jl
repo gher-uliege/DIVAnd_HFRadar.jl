@@ -52,7 +52,7 @@ end
 
 """
 
-    DIVAndrun_hfradar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;...)
+    DIVAndrun_HFRadar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;...)
 
 HF Radar current analysis with DIVAnd and velocity constraints. The input
 parameters are:
@@ -157,7 +157,7 @@ r, u, v, direction and β consistent with the CODAR convention of the ruv files 
 
 
 """
-function DIVAndrun_hfradar(
+function DIVAndrun_HFRadar(
     mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;
     eps2_boundary_constraint = -1,
     eps2_div_constraint = -1,
@@ -368,7 +368,7 @@ function DIVAndrun_hfradar(
 end
 
 
-export DIVAndrun_hfradar
+export DIVAndrun_HFRadar
 
 function cv_rec(
     ncenter,Δn,
@@ -457,7 +457,7 @@ function cv_rec(
     # give zero weight to cross-validation points
     epsilon2[forcv] .= Inf
 
-    uri_temp,vri_temp,ηri_temp = DIVAndrun_hfradar(
+    uri_temp,vri_temp,ηri_temp = DIVAndrun_HFRadar(
         mask,h3d,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;
         eps2_boundary_constraint = eps2_boundary_constraint,
         eps2_div_constraint = eps2_div_constraint,
@@ -482,7 +482,7 @@ end
 
 
 """
-    DIVAnd_hfradar.cverr(
+    DIVAnd_HFRadar.cverr(
         xobs_all,yobs_all,robs_all,directionobs_all,flagcv_all,sitenames,
         lonr,latr,timerange,
         mask2d,h,
@@ -506,7 +506,7 @@ function cverr(
     u = [], v = [], η = [],
     selection = :cv,
     Δn = 1,     # time window
-    logfilename = "DIVAnd-hfradar-$(Dates.now()).log"
+    logfilename = "DIVAnd-HFRadar-$(Dates.now()).log"
 )
 
     if selection == :all

@@ -1,4 +1,4 @@
-using DIVAnd_hfradar
+using DIVAnd_HFRadar
 using DIVAnd
 using Test
 using LinearAlgebra
@@ -11,7 +11,7 @@ function fun(x,δx)
     Δtf = 0.1
     u,v = unpack(sv,x)
     δu,δv = unpack(sv,δx)
-    δun,δvn = DIVAnd_hfradar.intertial_oscillation(Δtf,u,v,δu,δv)
+    δun,δvn = DIVAnd_HFRadar.intertial_oscillation(Δtf,u,v,δu,δv)
     return pack(sv,(δun,δvn))[:,1]
 end
 
@@ -19,7 +19,7 @@ function fun_adj(x,δx)
     Δtf = 0.1
     u,v = unpack(sv,x)
     δun,δvn = unpack(sv,δx)
-    δu,δv = DIVAnd_hfradar.intertial_oscillation_adj(Δtf,u,v,δun,δvn)
+    δu,δv = DIVAnd_HFRadar.intertial_oscillation_adj(Δtf,u,v,δun,δvn)
     return pack(sv,(δu,δv))[:,1]
 end
 

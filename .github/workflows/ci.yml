@@ -45,8 +45,8 @@ jobs:
       - uses: julia-actions/julia-runtest@latest
         continue-on-error: ${{ matrix.version == 'nightly' }}
         env:
-          DIVAnd_hfradar_USERNAME: ${{ secrets.DIVAnd_hfradar_USERNAME }}
-          DIVAnd_hfradar_PASSWORD: ${{ secrets.DIVAnd_hfradar_PASSWORD }}
+          DIVAnd_HFRadar_USERNAME: ${{ secrets.DIVAnd_HFRadar_USERNAME }}
+          DIVAnd_HFRadar_PASSWORD: ${{ secrets.DIVAnd_HFRadar_PASSWORD }}
           CMEMS_USERNAME: ${{ secrets.CMEMS_USERNAME }}
           CMEMS_PASSWORD: ${{ secrets.CMEMS_PASSWORD }}
 
@@ -75,8 +75,8 @@ jobs:
       - run: |
           julia --project=docs -e '
             using Documenter: doctest
-            using DIVAnd_hfradar
-            doctest(DIVAnd_hfradar)'
+            using DIVAnd_HFRadar
+            doctest(DIVAnd_HFRadar)'
       - run: julia --project=docs docs/make.jl
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
