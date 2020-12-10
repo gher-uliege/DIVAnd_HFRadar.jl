@@ -20,13 +20,13 @@ begin
 	#Pkg.activate(mktempdir())
 
 	# This is how you add a package:
-	#Pkg.add("PlutoUI")
-	#Pkg.add("DIVAnd")
-	#Pkg.add("PyPlot")
-    #Pkg.add(url="https://github.com/gher-ulg/DIVAnd_hfradar.jl", rev="master")
+	Pkg.add("PlutoUI")
+	Pkg.add("DIVAnd")
+	Pkg.add("PyPlot")
+        Pkg.add(url="https://github.com/gher-ulg/DIVAnd_hfradar.jl", rev="master")
 
 	using PlutoUI
-    using DIVAnd_hfradar: DIVAndrun_hfradar
+        using DIVAnd_hfradar: DIVAndrun_hfradar
 	using DIVAnd
 	using PyPlot
 end
