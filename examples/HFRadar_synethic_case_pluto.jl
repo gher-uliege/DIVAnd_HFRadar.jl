@@ -23,7 +23,7 @@ begin
     try
         pyimport("matplotlib")
     catch
-        run(`pip install matplotlib`)
+        run(`$(PyCall.python) -m pip install matplotlib`)
     end
     Pkg.add("PlutoUI")
     Pkg.add("DIVAnd")

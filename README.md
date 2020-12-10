@@ -1,7 +1,6 @@
 # DIVAnd_HFRadar.jl
 
 [![Build Status](https://github.com/gher-ulg/DIVAnd_HFRadar.jl/workflows/CI/badge.svg)](https://github.com/gher-ulg/DIVAnd_HFRadar.jl/actions)
-[![Coverage Status](https://coveralls.io/repos/gher-ulg/DIVAnd_HFRadar.jl/badge.svg?branch=master&service=github)](https://coveralls.io/github/gher-ulg/DIVAnd_HFRadar.jl?branch=master)
 [![codecov.io](http://codecov.io/github/gher-ulg/DIVAnd_HFRadar.jl/coverage.svg?branch=master)](http://codecov.io/github/gher-ulg/DIVAnd_HFRadar.jl?branch=master)
 [![documentation latest](https://img.shields.io/badge/docs-dev-blue.svg)](https://gher-ulg.github.io/DIVAnd_HFRadar.jl/dev/)
 
@@ -13,7 +12,7 @@ The method is described in: Alexander Barth, Charles Troupin, Emma Reyes, Aida A
 
 # Installation
 
-Install DIVAnd_HFRadar.jl in julia 1.5 or later with the folling command executed in Julia:
+Install DIVAnd_HFRadar.jl in [julia](https://julialang.org/downloads/) 1.5 or later with the following command executed in Julia:
 
 ```julia
 using Pkg
@@ -23,3 +22,18 @@ Pkg.add(url="https://github.com/gher-ulg/DIVAnd_HFRadar.jl", rev="master")
 # Documentation
 
 [Documentation is available here](https://gher-ulg.github.io/DIVAnd_HFRadar.jl/dev/).
+
+# Online-demo
+
+A online-demo is available on the free service binder.org at the following link:
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/fonsp/pluto-on-binder/master?urlpath=pluto/open?url=https%253A%252F%252Fraw.githubusercontent.com%252Fgher-ulg%252FDIVAnd_HFRadar.jl%252Fmaster%252Fexamples%252FHFRadar_synethic_case_pluto.jl) (this can take 2 to 10 minutes to start). If this does not work, then you can install `Pluto.jl` in Julia by running:
+
+```julia
+using Pkg
+Pkg.add("Pluto")
+using Pluto
+Pluto.run()
+```
+
+Then open the file [examples/HFRadar_synethic_case_pluto.jl](examples/HFRadar_synethic_case_pluto.jl)
+
