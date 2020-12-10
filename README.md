@@ -26,7 +26,7 @@ Pkg.add(url="https://github.com/gher-ulg/DIVAnd_HFRadar.jl", rev="master")
 # Online-demo
 
 A online-demo is available on the free service binder.org at the following link:
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/fonsp/pluto-on-binder/master?urlpath=pluto/open?url=https%253A%252F%252Fraw.githubusercontent.com%252Fgher-ulg%252FDIVAnd_HFRadar.jl%252Fmaster%252Fexamples%252FHFRadar_synethic_case_pluto.jl) (this can take 2 to 10 minutes to start). If this does not work, then you can install `Pluto.jl` in Julia by running:
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/fonsp/pluto-on-binder/master?urlpath=pluto/open?url=https%253A%252F%252Fraw.githubusercontent.com%252Fgher-ulg%252FDIVAnd_HFRadar.jl%252Fmaster%252Fexamples%252FHFRadar_synthetic_case_pluto.jl.jl) (this can take 2 to 10 minutes to start). If this does not work, then you can install `Pluto.jl` in Julia by running:
 
 ```julia
 using Pkg
@@ -35,5 +35,5 @@ using Pluto
 Pluto.run()
 ```
 
-Then open the file [examples/HFRadar_synethic_case_pluto.jl](examples/HFRadar_synethic_case_pluto.jl)
+Then open the file [examples/HFRadar_synthetic_case_pluto.jl.jl](examples/HFRadar_synthetic_case_pluto.jl.jl)
 
