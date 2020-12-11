@@ -1,9 +1,9 @@
 # DIVAnd HF Radar
 
 
-The package `DIVAnd_HFRadar` allow to interpolate surface current data on a regular grid.
-The primary use-case is for radial current measurements for high-frequency radars. But it can also be applied to any other
-current data (like ADCPs or drifters).
+The package `DIVAnd_HFRadar` allow one to interpolate surface current data on a regular grid.
+The primary use-case is for radial current measurements from high-frequency (HF) radars. But it can also be applied to any other
+current data, such as ADCPs or drifters.
 
 ## Formulation
 
@@ -57,7 +57,7 @@ J_{\mathrm{div}}(\vec u) = \frac{1}{\epsilon^2_{\mathrm{div}}} \int_{\Omega} \le
 
 ### Simplified momentum balance
 
-In order to take the momentum balance into account, the time dimension must include the time dimension and the surface elevation ``\eta`` is also a parameter
+In order to take the momentum balance into account, the cost function must include the time dimension and the surface elevation ``\eta`` is also a parameter
 of our cost function:
 
 ```math
@@ -89,7 +89,7 @@ sudo apt install python3-matplotlib
 
 ### Data constraint
 
-In this example, we are setting up an idealized domain from spanning -1 to 1 with 10x11 grid points.
+In this example, we are setting up an idealized domain spanning from -1 to 1 with 10X11 grid points.
 The gray area on the right is a coastal wall.
 
 ```@example 1
