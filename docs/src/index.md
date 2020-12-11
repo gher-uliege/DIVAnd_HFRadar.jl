@@ -30,6 +30,12 @@ site of the ``i``-th radial observation ``{u_r}_i``, ``N`` is the number of radi
 ```
 
 where ``\vec n`` is the vector normal to the coastline ``\partial \Omega``. At the open ocean boundaries, this constraint is not activated, allowing therefore a flow through the domain.
+The constraint on the normal velocity at the coastline is added as a weak constraint to the cost function:
+
+```math
+J_{\mathrm{bc}}(\vec u) = \frac{1}{\epsilon^2_{\mathrm{bc}}} \int_{\partial \Omega} (\vec u \cdot \vec n)^2 ds.
+```
+
 
 ### Horizontal divergence
 
@@ -39,8 +45,14 @@ If we integrate the continuity equation over the surface layer and ignore the ve
 \boldsymbol \nabla \cdot (h \vec u) \simeq 0.
 ```
 
-where ``h`` is the average depth of the surface mixed layer or the total water depth where total water depth is shallower and the average depth of the surface layer. 
+where ``h`` is the average depth of the surface mixed layer or the total water depth where total water depth is shallower than the average depth of the surface layer.
 As before, this constraint is included in the cost function as a weak constraint with the following form:
+
+
+```math
+J_{\mathrm{div}}(\vec u) = \frac{1}{\epsilon^2_{\mathrm{div}}} \int_{\Omega} \left(\boldsymbol \nabla \cdot (h \vec u)\right)^2 dx
+```
+
 
 
 ### Simplified momentum balance
