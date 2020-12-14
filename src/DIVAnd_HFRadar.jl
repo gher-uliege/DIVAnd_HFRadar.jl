@@ -3,7 +3,6 @@
 module DIVAnd_HFRadar
 
 import DIVAnd
-using Missings
 using Distributed
 using Statistics
 using SparseArrays
