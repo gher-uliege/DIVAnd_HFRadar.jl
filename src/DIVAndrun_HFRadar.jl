@@ -63,7 +63,7 @@ parameters are:
 * `xyi`: coordinates of the analysis grid (tuple of three 3D-arrays)
 * `xyobs`: coordinates of the observations (tuple of three vectors)
 * `robs`: radial velocity (vector)
-* `directionobs`: angle α of the measured direction in degrees (vector) such that (see below)
+* `directionobs`: angle α of the measured direction in *degrees* (vector) such that (see below)
 
 ```math
 u_{obs}  \\sin(α) + v_{obs}  \\cos(α) ≈ r_{obs}
@@ -95,8 +95,8 @@ the background estimate.
 
 ## Convention for the direction
 
-bearing β: angle at radar station (*) between North a measuring point (+) counted clockwise
-direction α: angle at measuring point between North and vector pointing to the radar station counted clockwise
+The bearing β is the angle at radar station (*) between North a measuring point (+) counted clockwise and the
+direction α is angle at measuring point between North and vector pointing to the radar station counted clockwise
 
 
                     ↑ /
@@ -114,10 +114,10 @@ direction α: angle at measuring point between North and vector pointing to the 
 Sufficiently far from the poles, we have:
 
 ```math
-α ≈ β + 180
+α ≈ β + 180°
 ```
 
-The ``u`` zonal and ``v`` meridional velocity component are related to the radial current ``r`` and direction ``β`` by:
+The ``u`` zonal and ``v`` meridional velocity component are related to the radial current ``r`` and direction ``\alpha`` by:
 
 ```math
 \\begin{aligned}
@@ -144,6 +144,8 @@ r, u, v, direction and β consistent with the CODAR convention of the ruv files 
     For the Coriolis force constrain and the surface pressure gradient
     constrain, one need to include a time dimension.
 
+!!! info
+    On input, the direction angles ``\alpha`` are expressed in degrees (0 - 360°)
 
 !!! info
     If you see the error
