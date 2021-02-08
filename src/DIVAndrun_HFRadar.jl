@@ -75,9 +75,9 @@ the background estimate.
 
 ## Optional input parameters
 
-* `eps2_boundary_constraint` (default -1):
-* `eps2_div_constraint` (default -1):
-* `eps2_Coriolis_constraint` (default -1):
+* `eps2_boundary_constraint` (default -1): rel. error variance of the boundary constraints
+* `eps2_div_constraint` (default -1): rel. error variance of the divergence constraints
+* `eps2_Coriolis_constraint` (default -1): rel. error variance of the Coriolis constraints
 * `f` (default 0.001 s⁻¹): Coriolis parameter. For a latitude ``φ``, we have on Earth :
 
 ```math
@@ -494,7 +494,37 @@ end
         eps2_Coriolis_constraint,
         g,ratio; u = [], v = [], η = [], selection = :cv)
 
-Cross-validation error
+Return the cross-validation error and potentially the analysis for a set of parameters.
+
+Input parameters:
+
+* `xobs_all`: longitude (4D array with the dimension: lon, lat, time, station)
+* `yobs_all`: latitude (4D array with the dimension: lon, lat, time, station)
+* `robs_all`: radial velocity (4D array with the dimension: lon, lat, time, station)
+* `directionobs_all`: direction in degrees (4D array with the dimension: lon, lat, time, station)
+* `flagcv_all`: true if used for validation and false otherwise (4D array with the dimension: lon, lat, time, station)
+* `sitenames`: names of radar stations (vector of strings)
+* `lonr`: vector of all longitude points of the grid
+* `latr`: vector of all latitude points of the grid
+* `timerange`: vector of all time instances (vector of DateTime)
+* `mask2d`: 2D land-sea mask; true if sea, false is land (2D array with the dimension: lon, lat)
+* `h`: depth (2D array with the dimension: lon, lat)
+* `u`: the interpolated u velocity (if the parameter is not empty)
+* `v`: the interpolated v velocity (if the parameter is not empty) 
+* `η`: the interpolated η velocity (if the parameter is not empty)
+* `selection`: compute the analysis only of time instances with cross-validation points (`:cv`, default) or over all points (:`all`)
+* `Δn`: time window (default 1)
+
+
+See also `DIVAnd_HFRadar.DIVAndrun_HFRadar` for other parameters.
+
+Note if `u`, `v` and `η` are provided, they should have the correct dimensions:
+```
+u = zeros(length(lonr),length(latr),length(timerange))
+v = zeros(length(lonr),length(latr),length(timerange))
+η = zeros(length(lonr),length(latr),length(timerange))
+
+```
 """
 function cverr(
     xobs_all,yobs_all,robs_all,directionobs_all,flagcv_all,sitenames,
