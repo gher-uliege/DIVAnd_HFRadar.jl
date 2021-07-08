@@ -8,7 +8,8 @@ The package `DIVAnd_HFRadar` interpolates surface current data on a regular grid
 The primary use-case is for radial current measurements for high-frequency radars (like WERA or CODAR SeaSonde). But it can also be applied to any other
 current data (like ADCPs or drifters).
 
-The method is described in: Alexander Barth, Charles Troupin, Emma Reyes, Aida Alvera-Azcárate, Jean-Marie Beckers and Joaquı́n Tintoré (2021): [Variational interpolation of high-frequency radar surface currents using DIVAnd](https://doi.org/10.1007/s10236-020-01432-x). Ocean Dynamics, doi: 10.1007/s10236-020-01432-x (open access)
+The method is described in: Barth, A., Troupin, C., Reyes, E., Alvera-Azcárate, A., Beckers J.-M. and Tintoré J. (2021): [Variational interpolation of high-frequency radar surface currents using DIVAnd](https://doi.org/10.1007/s10236-020-01432-x). Ocean Dynamics, 71, 293–308
+doi: 10.1007/s10236-020-01432-x (open access)
 
 # Installation
 
