@@ -1,4 +1,4 @@
-""""
+"""
 Stagger from a `u` to a `rho` location in an Arakawa C grid
 """
 function stagger_u2r(u)
