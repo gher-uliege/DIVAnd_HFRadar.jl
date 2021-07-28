@@ -9,7 +9,7 @@ The primary use-case is for radial current measurements for high-frequency radar
 current data (like ADCPs or drifters).
 
 The method is described in: Barth, A., Troupin, C., Reyes, E., Alvera-Azcárate, A., Beckers J.-M. and Tintoré J. (2021): [Variational interpolation of high-frequency radar surface currents using DIVAnd](https://doi.org/10.1007/s10236-020-01432-x). Ocean Dynamics, 71, 293–308
-doi: 10.1007/s10236-020-01432-x (open access)
+doi: 10.1007/s10236-020-01432-x (open access, [bibtex](CITATION.bib))
 
 # Installation
 
