@@ -117,7 +117,7 @@ Sufficiently far from the poles, we have:
 α ≈ β + 180°
 ```
 
-The ``u`` zonal and ``v`` meridional velocity component are related to the radial current ``r`` and direction ``\alpha`` by:
+The ``u`` zonal and ``v`` meridional velocity component are related to the radial current ``r`` and direction ``α`` by:
 
 ```math
 \\begin{aligned}
