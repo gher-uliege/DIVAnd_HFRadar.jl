@@ -52,7 +52,7 @@ end
 
 """
 
-    DIVAndrun_HFRadar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;...)
+    uri,vri = DIVAndrun_HFRadar(mask,h,pmn,xyi,xyobs,robs,directionobs,len,epsilon2;...)
 
 HF Radar current analysis with DIVAnd and velocity constraints. The input
 parameters are:
@@ -117,7 +117,7 @@ Sufficiently far from the poles, we have:
 α ≈ β + 180°
 ```
 
-The ``u`` zonal and ``v`` meridional velocity component are related to the radial current ``r`` and direction ``α`` by:
+The ``u`` zonal and ``v`` meridional velocity component are related to the radial current ``r`` and direction α by:
 
 ```math
 \\begin{aligned}
