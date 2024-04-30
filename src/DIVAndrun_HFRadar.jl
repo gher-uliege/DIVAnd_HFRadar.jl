@@ -498,11 +498,11 @@ Return the cross-validation error and potentially the analysis for a set of para
 
 Input parameters:
 
-* `xobs_all`: longitude (4D array with the dimension: lon, lat, time, station)
-* `yobs_all`: latitude (4D array with the dimension: lon, lat, time, station)
+* `xobs_all`: longitude (3D array with the dimension: lon, lat, station)
+* `yobs_all`: latitude (3D array with the dimension: lon, lat, station)
 * `robs_all`: radial velocity (4D array with the dimension: lon, lat, time, station)
 * `directionobs_all`: direction in degrees (4D array with the dimension: lon, lat, time, station)
-* `flagcv_all`: true if used for validation and false otherwise (4D array with the dimension: lon, lat, time, station)
+* `flagcv_all`: array of boolean with true if data is used for validation and false otherwise (4D array with the dimension: lon, lat, time, station)
 * `sitenames`: names of radar stations (vector of strings)
 * `lonr`: vector of all longitude points of the grid
 * `latr`: vector of all latitude points of the grid
@@ -510,7 +510,7 @@ Input parameters:
 * `mask2d`: 2D land-sea mask; true if sea, false is land (2D array with the dimension: lon, lat)
 * `h`: depth (2D array with the dimension: lon, lat)
 * `u`: the interpolated u velocity (if the parameter is not empty)
-* `v`: the interpolated v velocity (if the parameter is not empty) 
+* `v`: the interpolated v velocity (if the parameter is not empty)
 * `η`: the interpolated η velocity (if the parameter is not empty)
 * `selection`: compute the analysis only of time instances with cross-validation points (`:cv`, default) or over all points (:`all`)
 * `Δn`: time window (default 1)
