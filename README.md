@@ -13,7 +13,7 @@ doi: 10.1007/s10236-020-01432-x (open access, [bibtex](CITATION.bib))
 
 # Installation
 
-Install DIVAnd_HFRadar.jl in [julia](https://julialang.org/downloads/) 1.5 or later with the following command executed in Julia:
+Install DIVAnd_HFRadar.jl in [julia](https://julialang.org/downloads/) 1.6 or later with the following command executed in Julia:
 
 ```julia
 using Pkg
