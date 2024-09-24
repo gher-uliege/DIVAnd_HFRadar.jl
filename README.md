@@ -1,7 +1,7 @@
 # DIVAnd_HFRadar.jl
 
 [![Build Status](https://github.com/gher-uliege/DIVAnd_HFRadar.jl/workflows/CI/badge.svg)](https://github.com/gher-uliege/DIVAnd_HFRadar.jl/actions)
-[![codecov.io](http://codecov.io/github/gher-uliege/DIVAnd_HFRadar.jl/coverage.svg?branch=master)](http://codecov.io/github/gher-uliege/DIVAnd_HFRadar.jl?branch=master)
+[![codecov](https://codecov.io/github/gher-uliege/DIVAnd_HFRadar.jl/graph/badge.svg?token=wbdDRzAIQj)](https://codecov.io/github/gher-uliege/DIVAnd_HFRadar.jl)
 [![documentation latest](https://img.shields.io/badge/docs-dev-blue.svg)](https://gher-uliege.github.io/DIVAnd_HFRadar.jl/dev/)
 
 The package `DIVAnd_HFRadar` interpolates surface current data on a regular grid possibly taking dynamical contraints into account.
